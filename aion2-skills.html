@@ -119,75 +119,6 @@
         </div>
       </div>
 
-      <div class="mt-6">
-        <div
-          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
-        >
-          <div class="mb-3 flex items-center justify-between">
-            <h3
-              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-            >
-              Active Skills
-            </h3>
-            <span
-              id="count-active"
-              class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]"
-              >0</span
-            >
-          </div>
-          <div
-            id="grid-active"
-            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
-          ></div>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <div
-          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
-        >
-          <div class="mb-3 flex items-center justify-between">
-            <h3
-              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-            >
-              Passive Skills
-            </h3>
-            <span
-              id="count-passive"
-              class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]"
-              >0</span
-            >
-          </div>
-          <div
-            id="grid-passive"
-            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
-          ></div>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <div
-          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
-        >
-          <div class="mb-3 flex items-center justify-between">
-            <h3
-              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
-            >
-              Stigma Skills
-            </h3>
-            <span
-              id="count-stigma"
-              class="rounded-md border border-purple-400/40 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.35)]"
-              >0</span
-            >
-          </div>
-          <div
-            id="grid-stigma"
-            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
-          ></div>
-        </div>
-      </div>
-
       <div
         class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
       >
@@ -275,6 +206,75 @@
         </div>
       </div>
 
+      <div class="mt-6">
+        <div
+          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3
+              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+            >
+              Active Skills
+            </h3>
+            <span
+              id="count-active"
+              class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]"
+              >0</span
+            >
+          </div>
+          <div
+            id="grid-active"
+            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div
+          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3
+              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+            >
+              Passive Skills
+            </h3>
+            <span
+              id="count-passive"
+              class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]"
+              >0</span
+            >
+          </div>
+          <div
+            id="grid-passive"
+            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div
+          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3
+              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+            >
+              Stigma Skills
+            </h3>
+            <span
+              id="count-stigma"
+              class="rounded-md border border-purple-400/40 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.35)]"
+              >0</span
+            >
+          </div>
+          <div
+            id="grid-stigma"
+            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
+        </div>
+      </div>
+
       <div class="mt-8 text-center text-xs text-slate-400">
         Left-Click to add to loadout • Right-Click to cycle levels
       </div>
@@ -314,15 +314,7 @@
         return img;
       }
 
-      // Helper function to get skill icon based on type
-      function getSkillIcon(skillType) {
-        const icons = {
-          active: "⚔️",
-          passive: "🛡️",
-          stigma: "🔮",
-        };
-        return icons[skillType] || "❓";
-      }
+      // Skill icons are now loaded from the Skill-icons folder
 
       // ---------- Data ----------
       const CLASSES = [
@@ -449,22 +441,27 @@
         const skillImagePath = `Skill-icons/${skill.id}.png`;
 
         btn.innerHTML = `
-    <div class="absolute inset-0 grid place-items-center">
-      <div class="h-12 w-12 bg-slate-800/50 rounded-md flex items-center justify-center bg-cover bg-center" 
-           style="background-image: url('${skillImagePath}')">
-        <!-- Fallback content if image doesn't load -->
-        <span class="text-xs text-center text-slate-400 ${
-          skill.imageLoaded ? "hidden" : ""
-        }">${skill.name.substring(0, 10)}</span>
+    <div class="absolute inset-0 flex flex-col p-1">
+      <!-- Icon container - unchanged -->
+      <div class="w-full flex-1 flex items-start justify-start pl-4" style="margin-top: 7px;">
+        <div class="w-4/5 aspect-square max-w-[80px] bg-slate-800/50 rounded-md flex items-center justify-center" 
+             style="background-image: url('${skillImagePath}'); background-size: contain; background-repeat: no-repeat;">
+        </div>
       </div>
+    </div>
+    <!-- Text container - positioned absolutely to move independently -->
+    <div class="absolute bottom-3 left-0 right-0 text-center px-1">
+      <div class="text-xs font-medium text-slate-200 truncate">${
+        skill.name
+      }</div>
     </div>
     <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800">
       <div class="h-full bg-cyan-400 transition-all" style="width:${
         pct * 100
       }%"></div>
     </div>
-    <div class="absolute right-1 top-1">
-      <span class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]">Lv.${level}</span>
+    <div class="absolute right-0.5 top-0 z-10">
+      <span class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]">Lv.${level}</span>
     </div>
     ${
       isInLoadout
@@ -543,12 +540,20 @@
               );
 
               if (emptySlot) {
-                // Add to loadout - show only the skill icon
+                // Add to loadout - show the actual skill icon
+                const skillImagePath = `Skill-icons/${skill.id}.png`;
                 emptySlot.innerHTML = `
-            <div class="h-full w-full flex items-center justify-center p-1">
-              <div class="text-2xl">${getSkillIcon(skill.type)}</div>
-            </div>
-          `;
+                  <div class="h-full w-full flex flex-col items-center justify-center p-1">
+                    <div class="w-10 h-10 bg-slate-800/50 rounded-md flex items-center justify-center bg-cover bg-center" 
+                         style="background-image: url('${skillImagePath}'); background-size: contain; background-repeat: no-repeat;">
+                    </div>
+                    <div class="text-xs mt-1 text-center truncate w-full">${skill.name}</div>
+                  </div>
+                `;
+
+                // Preload the image
+                const img = new Image();
+                img.src = skillImagePath;
                 emptySlot.dataset.skillId = skill.id;
                 emptySlot.title = `${skill.name} (Lv.${level})`;
               }
