@@ -8,6 +8,32 @@
     <script src="skills-data.js"></script>
     <script>
       console.log("CLASS_SKILLS loaded:", CLASS_SKILLS);
+      
+      // Function to create skill tooltip HTML
+      function createSkillTooltip(skill, currentLevel) {
+        const maxLevel = skill.maxLevel || 1;
+        const levelData = skill.levels ? skill.levels.find(l => l.level === currentLevel) || {} : {};
+        const description = levelData.desc || 'No description available.';
+        const levelPercentage = (currentLevel / maxLevel) * 100;
+        
+        return `
+          <div class="skill-tooltip">
+            <div class="skill-tooltip-header">
+              <span class="skill-tooltip-name">${skill.name}</span>
+              <span class="skill-tooltip-type">${skill.type || 'active'}</span>
+            </div>
+            <div class="skill-tooltip-level">
+              Level ${currentLevel} / ${maxLevel}
+            </div>
+            <div class="skill-tooltip-level-bar">
+              <div class="skill-tooltip-level-fill" style="width: ${levelPercentage}%"></div>
+            </div>
+            <div class="skill-tooltip-desc">
+              ${description}
+            </div>
+          </div>
+        `;
+      }
     </script>
     <style>
       html,
@@ -23,6 +49,7 @@
         backdrop-filter: blur(6px);
       }
       .skill-tile {
+        position: relative;
         transition: box-shadow 0.15s ease, transform 0.06s ease;
         min-height: 80px;
         display: flex;
@@ -30,9 +57,98 @@
         justify-content: center;
         align-items: center;
         padding: 0.5rem;
+        overflow: visible !important;
       }
       .skill-tile:hover {
         box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+        z-index: 10;
+      }
+      
+      .skill-tooltip {
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%) scale(0.95);
+        width: 280px;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+        transform-origin: bottom center;
+        will-change: transform, opacity;
+      }
+      
+      .skill-tile:hover .skill-tooltip {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(-5px);
+        visibility: visible;
+      }
+      
+      .skill-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px;
+        border-style: solid;
+        border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+      }
+      
+      .skill-tooltip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      }
+      
+      .skill-tooltip-name {
+        font-weight: 600;
+        color: #e2e8f0;
+        font-size: 1.1em;
+      }
+      
+      .skill-tooltip-type {
+        font-size: 0.8em;
+        background: rgba(56, 189, 248, 0.2);
+        color: #7dd3fc;
+        padding: 2px 8px;
+        border-radius: 10px;
+        text-transform: capitalize;
+      }
+      
+      .skill-tooltip-level {
+        font-size: 0.9em;
+        color: #94a3b8;
+        margin-bottom: 8px;
+      }
+      
+      .skill-tooltip-desc {
+        font-size: 0.9em;
+        line-height: 1.5;
+        color: #cbd5e1;
+      }
+      
+      .skill-tooltip-level-bar {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        margin: 8px 0;
+        overflow: hidden;
+      }
+      
+      .skill-tooltip-level-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+        transition: width 0.3s ease;
       }
       .skill-tile:active {
         transform: scale(0.98);
@@ -433,42 +549,40 @@
         // For skills with maxLevel 1, show Lv.1/1 instead of Lv.1/undefined
         const maxLevelDisplay =
           skill.maxLevel === undefined ? "1" : skill.maxLevel;
-        btn.title = `${skill.name} (Lv.${level}${
-          skill.maxLevel !== undefined ? `/${maxLevelDisplay}` : ""
-        })${isInLoadout ? " (In Loadout)" : ""}`;
-
+        
+        // Remove title attribute as we're using custom tooltips now
+        btn.title = '';
+        
         // Use the skill's ID to construct the image path
         const skillImagePath = `Skill-icons/${skill.id}.png`;
 
+        // Create the tooltip HTML
+        const tooltipHTML = createSkillTooltip(skill, level);
+        
+        // Set the button's HTML, including the tooltip
         btn.innerHTML = `
-    <div class="absolute inset-0 flex flex-col p-1">
-      <!-- Icon container - unchanged -->
-      <div class="w-full flex-1 flex items-start justify-start pl-4" style="margin-top: 7px;">
-        <div class="w-4/5 aspect-square max-w-[80px] bg-slate-800/50 rounded-md flex items-center justify-center" 
-             style="background-image: url('${skillImagePath}'); background-size: contain; background-repeat: no-repeat;">
-        </div>
-      </div>
-    </div>
-    <!-- Text container - positioned absolutely to move independently -->
-    <div class="absolute bottom-3 left-0 right-0 text-center px-1">
-      <div class="text-xs font-medium text-slate-200 truncate">${
-        skill.name
-      }</div>
-    </div>
-    <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800">
-      <div class="h-full bg-cyan-400 transition-all" style="width:${
-        pct * 100
-      }%"></div>
-    </div>
-    <div class="absolute right-0.5 top-0 z-10">
-      <span class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]">Lv.${level}</span>
-    </div>
-    ${
-      isInLoadout
-        ? '<div class="absolute left-1 top-1 text-yellow-400">★</div>'
-        : ""
-    }
-  `;
+          <div class="absolute inset-0 flex flex-col p-1">
+            <!-- Icon container -->
+            <div class="w-full flex-1 flex items-start justify-start pl-4" style="margin-top: 7px;">
+              <div class="w-4/5 aspect-square max-w-[80px] bg-slate-800/50 rounded-md flex items-center justify-center" 
+                   style="background-image: url('${skillImagePath}'); background-size: contain; background-repeat: no-repeat;">
+              </div>
+            </div>
+          </div>
+          <!-- Text container - positioned absolutely to move independently -->
+          <div class="absolute bottom-3 left-0 right-0 text-center px-1">
+            <div class="text-xs font-medium text-slate-200 truncate">${skill.name}</div>
+          </div>
+          <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800">
+            <div class="h-full bg-cyan-400 transition-all" style="width:${pct * 100}%"></div>
+          </div>
+          <div class="absolute right-0.5 top-0 z-10">
+            <span class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]">Lv.${level}</span>
+          </div>
+          ${isInLoadout ? '<div class="absolute left-1 top-1 text-yellow-400">★</div>' : ''}
+          <!-- Tooltip container -->
+          ${tooltipHTML}
+        `;
 
         // Preload the image and handle loading errors
         const img = new Image();
@@ -588,8 +702,6 @@
         countActive.textContent = active.length;
         countPassive.textContent = passive.length;
         countStigma.textContent = stigma.length;
-
-        console.log("End of renderSkills");
       }
 
       function render() {
