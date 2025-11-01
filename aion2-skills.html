@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aion 2 – Skill Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      html,
+      body {
+        background: radial-gradient(
+          60% 60% at 50% -10%,
+          #1f2a44 0%,
+          #0a0f1e 70%
+        );
+      }
+      .ornate {
+        box-shadow: inset 0 0 30px rgba(60, 120, 255, 0.15);
+        backdrop-filter: blur(6px);
+      }
+      .skill-tile {
+        transition: box-shadow 0.15s ease, transform 0.06s ease;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5rem;
+      }
+      .skill-tile:hover {
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+      }
+      .skill-tile:active {
+        transform: scale(0.98);
+      }
+      .skill-tile .skill-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+      }
+      .skill-tile .skill-name {
+        font-size: 0.75rem;
+        text-align: center;
+        line-height: 1.2;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-slate-100">
+    <div class="mx-auto max-w-6xl px-4 py-6 md:py-10">
+      <div
+        class="mb-6 flex flex-col items-start justify-between gap-3 md:mb-10 md:flex-row md:items-center"
+      >
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">
+            Aion 2 – Skill Builder
+          </h1>
+        </div>
+      </div>
+
+      <div
+        class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+      >
+        <div class="mb-3 flex items-center justify-between">
+          <h3
+            class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+          >
+            Classes
+          </h3>
+        </div>
+        <div
+          id="class-grid"
+          class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4"
+        ></div>
+        <style>
+          .class-name {
+            margin-left: -70px;
+          }
+        </style>
+      </div>
+
+      <div
+        class="mt-6 ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4 mb-6"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-slate-300">Character Level:</label>
+            <input
+              type="number"
+              id="character-level"
+              min="1"
+              max="45"
+              value="1"
+              class="w-16 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-white text-center"
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              id="btn-max-levels"
+              class="rounded-xl border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-sm text-amber-200 hover:bg-amber-500/20"
+            >
+              Max Skill Levels
+            </button>
+            <button
+              id="btn-reset"
+              class="rounded-xl border border-slate-700 bg-[#0d1426] px-3 py-2 text-sm text-slate-200 hover:bg-[#101832]"
+            >
+              Reset
+            </button>
+            <button
+              id="btn-share"
+              class="rounded-xl border border-cyan-400/50 bg-cyan-500/10 px-3 py-2 text-sm text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.35)] hover:bg-cyan-500/20"
+            >
+              Share
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div
+          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3
+              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+            >
+              Active Skills
+            </h3>
+            <span
+              id="count-active"
+              class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]"
+              >0</span
+            >
+          </div>
+          <div
+            id="grid-active"
+            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div
+          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3
+              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+            >
+              Passive Skills
+            </h3>
+            <span
+              id="count-passive"
+              class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]"
+              >0</span
+            >
+          </div>
+          <div
+            id="grid-passive"
+            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div
+          class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3
+              class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+            >
+              Stigma Skills
+            </h3>
+            <span
+              id="count-stigma"
+              class="rounded-md border border-purple-400/40 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.35)]"
+              >0</span
+            >
+          </div>
+          <div
+            id="grid-stigma"
+            class="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        class="ornate rounded-2xl border border-slate-700/60 bg-[rgba(8,10,18,0.85)] p-4"
+      >
+        <div class="mb-3 flex items-center justify-between">
+          <h3
+            class="text-sm font-semibold uppercase tracking-wide text-slate-200"
+          >
+            SKILL LOADOUT
+          </h3>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-cyan-400">Active</span>
+            <span class="text-xs text-emerald-400">Passive</span>
+            <span class="text-xs text-purple-400">Stigma</span>
+          </div>
+        </div>
+
+        <div class="w-full px-2">
+          <div class="flex items-center justify-between">
+            <!-- Active Skills (4) -->
+            <div class="flex space-x-3 flex-1 justify-center">
+              <div
+                class="loadout-active h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-cyan-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(34,211,238,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-active h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-cyan-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(34,211,238,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-active h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-cyan-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(34,211,238,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-active h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-cyan-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(34,211,238,0.15)]"
+                data-skill-id=""
+              ></div>
+            </div>
+
+            <!-- Vertical Divider -->
+            <div class="h-14 w-0.5 bg-slate-700/60 mx-1"></div>
+
+            <!-- Passive Skills (4) -->
+            <div class="flex space-x-3 flex-1 justify-center">
+              <div
+                class="loadout-passive h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-emerald-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(16,185,129,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-passive h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-emerald-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(16,185,129,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-passive h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-emerald-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(16,185,129,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-passive h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-emerald-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(16,185,129,0.15)]"
+                data-skill-id=""
+              ></div>
+            </div>
+
+            <!-- Vertical Divider -->
+            <div class="h-14 w-0.5 bg-slate-700/60 mx-1"></div>
+
+            <!-- Stigma Skills (4) -->
+            <div class="flex space-x-3 flex-1 justify-center">
+              <div
+                class="loadout-stigma h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-purple-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(168,85,247,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-stigma h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-purple-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(168,85,247,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-stigma h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-purple-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(168,85,247,0.15)]"
+                data-skill-id=""
+              ></div>
+              <div
+                class="loadout-stigma h-[4.5rem] w-[4.5rem] rounded-xl border-2 border-purple-500/40 bg-[#0b1120] shadow-[inset_0_0_16px_rgba(168,85,247,0.15)]"
+                data-skill-id=""
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 text-center text-xs text-slate-400">
+        Left-Click to add to loadout • Right-Click to cycle levels
+      </div>
+    </div>
+
+    <script>
+      // ---------- Class Icon Helper ----------
+      function classIcon(iconNumber, label, selected) {
+        const img = document.createElement("img");
+        img.setAttribute("aria-label", label || "");
+        img.className =
+          "inline-block h-52 w-52 object-contain -ml-6 -mt-4 -mb-4";
+        img.src = `class-icon-${iconNumber}-hover.webp`;
+        img.alt = label || "";
+
+        // Apply different styles based on selection
+        if (selected) {
+          // Selected state: slight glow
+          img.style.filter = "drop-shadow(0 0 6px rgba(255,255,255,.3))";
+        } else {
+          // Non-selected state: reduce brightness and saturation
+          img.style.filter =
+            "brightness(0.8) saturate(0.85) drop-shadow(0 0 2px rgba(0,0,0,0.2))";
+          // Add smooth transition for hover effects
+          img.style.transition = "filter 0.2s ease";
+
+          // Add hover effect to slightly brighten on mouseover
+          img.addEventListener("mouseover", () => {
+            img.style.filter =
+              "brightness(0.85) saturate(0.9) drop-shadow(0 0 4px rgba(0,0,0,0.3))";
+          });
+          img.addEventListener("mouseout", () => {
+            img.style.filter =
+              "brightness(0.8) saturate(0.85) drop-shadow(0 0 2px rgba(0,0,0,0.2))";
+          });
+        }
+        return img;
+      }
+
+      // Helper function to get skill icon based on type
+      function getSkillIcon(skillType) {
+        const icons = {
+          active: "⚔️",
+          passive: "🛡️",
+          stigma: "🔮",
+        };
+        return icons[skillType] || "❓";
+      }
+
+      // ---------- Data ----------
+      const CLASSES = [
+        { id: "gladiator", name: "Gladiator", kr: "검성", icon: 1 },
+        { id: "templar", name: "Templar", kr: "수호성", icon: 2 },
+        { id: "assassin", name: "Assassin", kr: "살성", icon: 3 },
+        { id: "ranger", name: "Ranger", kr: "궁성", icon: 4 },
+        { id: "chanter", name: "Chanter", kr: "호법성", icon: 5 },
+        { id: "cleric", name: "Cleric", kr: "치유성", icon: 6 },
+        { id: "sorcerer", name: "Sorcerer", kr: "마도성", icon: 7 },
+        { id: "spiritmaster", name: "Spiritmaster", kr: "정령성", icon: 8 },
+      ];
+
+      const DEMO_SKILLS = [
+        // Active Skills
+        {
+          id: "bolt",
+          type: "active",
+          name: "Arcane Bolt",
+          maxLevel: 5,
+          levels: [
+            { level: 1, desc: "Deal 120 magic damage." },
+            { level: 2, desc: "Deal 150 magic damage." },
+            { level: 3, desc: "Deal 180 magic damage." },
+            { level: 4, desc: "Deal 210 magic damage + 5% crit." },
+            { level: 5, desc: "Deal 250 magic damage + 10% crit." },
+          ],
+        },
+        {
+          id: "blink",
+          type: "active",
+          name: "Blink",
+          maxLevel: 3,
+          levels: [
+            { level: 1, desc: "Teleport 6m." },
+            { level: 2, desc: "Teleport 8m, cleanse slow." },
+            { level: 3, desc: "Teleport 10m, grant 1s invuln." },
+          ],
+        },
+        {
+          id: "frostnova",
+          type: "active",
+          name: "Frost Nova",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "Deal 100 ice damage and freeze nearby enemies for 2s.",
+            },
+            {
+              level: 2,
+              desc: "Deal 140 ice damage and freeze nearby enemies for 2.5s.",
+            },
+            {
+              level: 3,
+              desc: "Deal 190 ice damage and freeze nearby enemies for 3s. Reduces target's movement speed by 30% after freeze ends.",
+            },
+          ],
+        },
+        {
+          id: "healingwave",
+          type: "active",
+          name: "Healing Wave",
+          maxLevel: 4,
+          levels: [
+            { level: 1, desc: "Heal target ally for 200 HP." },
+            { level: 2, desc: "Heal target ally for 280 HP." },
+            {
+              level: 3,
+              desc: "Heal target ally for 380 HP and remove 1 debuff.",
+            },
+            {
+              level: 4,
+              desc: "Heal target ally for 500 HP, remove 1 debuff, and grant 10% damage reduction for 5s.",
+            },
+          ],
+        },
+        {
+          id: "bladestorm",
+          type: "active",
+          name: "Blade Storm",
+          maxLevel: 2,
+          levels: [
+            {
+              level: 1,
+              desc: "Spin attack dealing 150% weapon damage to nearby enemies.",
+            },
+            {
+              level: 2,
+              desc: "Spin attack dealing 200% weapon damage to nearby enemies and gain 20% movement speed for 3s.",
+            },
+          ],
+        },
+        {
+          id: "soulburn",
+          type: "active",
+          name: "Soul Burn",
+          maxLevel: 3,
+          levels: [
+            { level: 1, desc: "Burn enemy's soul for 5% max HP over 6s." },
+            {
+              level: 2,
+              desc: "Burn enemy's soul for 7% max HP over 6s and reduce healing received by 30%.",
+            },
+            {
+              level: 3,
+              desc: "Burn enemy's soul for 10% max HP over 6s, reduce healing received by 50%, and deal 50% of the damage as AoE to nearby enemies.",
+            },
+          ],
+        },
+        {
+          id: "shadowstep",
+          type: "active",
+          name: "Shadow Step",
+          maxLevel: 2,
+          levels: [
+            {
+              level: 1,
+              desc: "Instantly teleport behind target enemy. Next attack within 3s deals 30% bonus damage.",
+            },
+            {
+              level: 2,
+              desc: "Instantly teleport behind target enemy. Next attack within 5s deals 50% bonus damage and stuns for 1.5s.",
+            },
+          ],
+        },
+        {
+          id: "rend",
+          type: "active",
+          name: "Rending Slash",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "Slash the enemy for 130% weapon damage and cause them to bleed for 50 damage over 5s.",
+            },
+            {
+              level: 2,
+              desc: "Slash the enemy for 160% weapon damage and cause them to bleed for 75 damage over 5s.",
+            },
+            {
+              level: 3,
+              desc: "Slash the enemy for 200% weapon damage and cause them to bleed for 100 damage over 5s. The target takes 10% more damage from your attacks while bleeding.",
+            },
+          ],
+        },
+        {
+          id: "thunderstrike",
+          type: "active",
+          name: "Thunder Strike",
+          maxLevel: 4,
+          levels: [
+            {
+              level: 1,
+              desc: "Call down a bolt of lightning dealing 140 magic damage to the target.",
+            },
+            {
+              level: 2,
+              desc: "Call down a bolt of lightning dealing 180 magic damage and stun for 1s.",
+            },
+            {
+              level: 3,
+              desc: "Call down a bolt of lightning dealing 230 magic damage and stun for 1.5s.",
+            },
+            {
+              level: 4,
+              desc: "Call down a bolt of lightning dealing 290 magic damage, stun for 2s, and chain to 2 additional nearby targets.",
+            },
+          ],
+        },
+        {
+          id: "barrier",
+          type: "active",
+          name: "Arcane Barrier",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "Create a barrier that absorbs 200 damage for 8s.",
+            },
+            {
+              level: 2,
+              desc: "Create a barrier that absorbs 300 damage for 10s.",
+            },
+            {
+              level: 3,
+              desc: "Create a barrier that absorbs 450 damage for 12s and reflects 20% of damage taken.",
+            },
+          ],
+        },
+        {
+          id: "fireball",
+          type: "active",
+          name: "Fireball",
+          maxLevel: 5,
+          levels: [
+            {
+              level: 1,
+              desc: "Hurl a fiery projectile dealing 150 fire damage.",
+            },
+            {
+              level: 2,
+              desc: "Hurl a fiery projectile dealing 190 fire damage.",
+            },
+            {
+              level: 3,
+              desc: "Hurl a fiery projectile dealing 240 fire damage with a 15% chance to burn for 30 damage over 3s.",
+            },
+            {
+              level: 4,
+              desc: "Hurl a fiery projectile dealing 300 fire damage with a 25% chance to burn for 50 damage over 3s.",
+            },
+            {
+              level: 5,
+              desc: "Hurl a fiery projectile dealing 370 fire damage with a 35% chance to burn for 80 damage over 3s and explode on impact, dealing 50% damage to nearby enemies.",
+            },
+          ],
+        },
+        {
+          id: "taunt",
+          type: "active",
+          name: "Challenging Shout",
+          maxLevel: 2,
+          levels: [
+            {
+              level: 1,
+              desc: "Taunt all enemies within 8m to attack you for 3s.",
+            },
+            {
+              level: 2,
+              desc: "Taunt all enemies within 10m to attack you for 5s and reduce their damage by 15% for the duration.",
+            },
+          ],
+        },
+        {
+          id: "smite",
+          type: "active",
+          name: "Divine Smite",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "Smite the enemy for 180% weapon damage as holy damage.",
+            },
+            {
+              level: 2,
+              desc: "Smite the enemy for 220% weapon damage as holy damage and heal for 50% of damage dealt.",
+            },
+            {
+              level: 3,
+              desc: "Smite the enemy for 270% weapon damage as holy damage, heal for 50% of damage dealt, and reduce target's damage by 20% for 4s.",
+            },
+          ],
+        },
+        {
+          id: "stealth",
+          type: "active",
+          name: "Shadow Veil",
+          maxLevel: 2,
+          levels: [
+            {
+              level: 1,
+              desc: "Enter stealth for 15s or until you attack. Breaking stealth grants 30% increased damage on your next attack.",
+            },
+            {
+              level: 2,
+              desc: "Enter stealth for 20s or until you attack. Breaking stealth grants 50% increased damage on your next attack and increases critical strike chance by 25% for that attack.",
+            },
+          ],
+        },
+        {
+          id: "rejuvenate",
+          type: "active",
+          name: "Rejuvenation",
+          maxLevel: 4,
+          levels: [
+            { level: 1, desc: "Heals the target for 80 health over 8s." },
+            { level: 2, desc: "Heals the target for 120 health over 8s." },
+            {
+              level: 3,
+              desc: "Heals the target for 170 health over 8s and removes 1 poison or disease effect.",
+            },
+            {
+              level: 4,
+              desc: "Heals the target for 230 health over 8s, removes 1 poison or disease effect, and increases all healing received by 15% for the duration.",
+            },
+          ],
+        },
+        {
+          id: "whirlwind",
+          type: "active",
+          name: "Whirlwind Strike",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "Spin rapidly, dealing 110% weapon damage to all enemies within 5m over 3s. You are immune to knockback while spinning.",
+            },
+            {
+              level: 2,
+              desc: "Spin rapidly, dealing 140% weapon damage to all enemies within 5m over 3s. You are immune to knockback and gain 15% damage reduction while spinning.",
+            },
+            {
+              level: 3,
+              desc: "Spin rapidly, dealing 180% weapon damage to all enemies within 5m over 3s. You are immune to knockback, gain 25% damage reduction, and have a 20% chance to stun enemies for 1s on each hit while spinning.",
+            },
+          ],
+        },
+        // Passive Skills
+        {
+          id: "aegis",
+          type: "passive",
+          name: "Aegis Training",
+          maxLevel: 4,
+          levels: [
+            { level: 1, desc: "+2% damage reduction." },
+            { level: 2, desc: "+4% damage reduction." },
+            { level: 3, desc: "+6% damage reduction." },
+            { level: 4, desc: "+8% damage reduction." },
+          ],
+        },
+        {
+          id: "focus",
+          type: "passive",
+          name: "Focused Mind",
+          maxLevel: 3,
+          levels: [
+            { level: 1, desc: "+3% crit chance." },
+            { level: 2, desc: "+6% crit chance." },
+            { level: 3, desc: "+10% crit chance." },
+          ],
+        },
+        {
+          id: "ironwill",
+          type: "passive",
+          name: "Iron Will",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "+5% maximum HP and +2% crowd control resistance.",
+            },
+            {
+              level: 2,
+              desc: "+10% maximum HP and +4% crowd control resistance.",
+            },
+            {
+              level: 3,
+              desc: "+15% maximum HP, +6% crowd control resistance, and immune to knockback effects.",
+            },
+          ],
+        },
+        {
+          id: "elementalaffinity",
+          type: "passive",
+          name: "Elemental Affinity",
+          maxLevel: 4,
+          levels: [
+            { level: 1, desc: "+5% fire and ice damage." },
+            { level: 2, desc: "+10% fire and ice damage." },
+            {
+              level: 3,
+              desc: "+15% fire and ice damage, 5% chance to freeze on fire damage.",
+            },
+            {
+              level: 4,
+              desc: "+20% fire and ice damage, 10% chance to freeze on fire damage or burn on ice damage.",
+            },
+          ],
+        },
+        {
+          id: "vitality",
+          type: "passive",
+          name: "Vitality Surge",
+          maxLevel: 2,
+          levels: [
+            {
+              level: 1,
+              desc: "Regenerate 1% max HP every 3 seconds when out of combat.",
+            },
+            {
+              level: 2,
+              desc: "Regenerate 2% max HP every 3 seconds when out of combat and increase all healing received by 15%.",
+            },
+          ],
+        },
+        {
+          id: "precisionshots",
+          type: "passive",
+          name: "Precision Shots",
+          maxLevel: 3,
+          levels: [
+            {
+              level: 1,
+              desc: "Ranged attacks have +5% critical strike chance.",
+            },
+            {
+              level: 2,
+              desc: "Ranged attacks have +10% critical strike chance and +5% critical damage.",
+            },
+            {
+              level: 3,
+              desc: "Ranged attacks have +15% critical strike chance and +10% critical damage. Critical hits reduce cooldowns by 1s.",
+            },
+          ],
+        },
+        {
+          id: "combatexpertise",
+          type: "passive",
+          name: "Combat Expertise",
+          maxLevel: 3,
+          levels: [
+            { level: 1, desc: "+3% attack speed and +2% movement speed." },
+            { level: 2, desc: "+6% attack speed and +4% movement speed." },
+            {
+              level: 3,
+              desc: "+10% attack speed, +6% movement speed, and 5% chance to dodge attacks.",
+            },
+          ],
+        },
+        // Stigma Skills
+        {
+          id: "shadowstrike",
+          type: "stigma",
+          name: "Shadow Strike",
+          max: 1,
+          icon: "⚔️",
+        },
+        {
+          id: "phoenixrebirth",
+          type: "stigma",
+          name: "Phoenix Rebirth",
+          max: 1,
+          icon: "🔥",
+          desc: "Upon death, revive with 30% HP and deal 200% magic damage to nearby enemies. 10 minute cooldown.",
+        },
+        {
+          id: "timelock",
+          type: "stigma",
+          name: "Time Lock",
+          max: 1,
+          icon: "⏱️",
+          desc: "Freeze time for all enemies in a 10m radius for 3 seconds. 3 minute cooldown.",
+        },
+        {
+          id: "mirrorimage",
+          type: "stigma",
+          name: "Mirror Image",
+          max: 1,
+          icon: "👥",
+          desc: "Create 2 mirror images that deal 30% of your damage and have 50% of your HP. Lasts 15 seconds. 2 minute cooldown.",
+        },
+        {
+          id: "divineshield",
+          type: "stigma",
+          name: "Divine Shield",
+          max: 1,
+          icon: "🛡️",
+          desc: "Become immune to all damage for 5 seconds. 8 minute cooldown.",
+        },
+        {
+          id: "apocalypse",
+          type: "stigma",
+          name: "Apocalypse",
+          max: 1,
+          icon: "☄️",
+          desc: "Call down a meteor shower dealing 500% magic damage to all enemies in target area over 5 seconds. 10 minute cooldown.",
+        },
+      ];
+
+      const CLASS_SKILLS = Object.fromEntries(
+        CLASSES.map((c) => [c.id, DEMO_SKILLS])
+      );
+
+      function encodeBuild(obj) {
+        return Object.entries(obj)
+          .filter(([k, v]) => v >= 1) // Changed from > 0 to >= 1 since 1 is now minimum
+          .map(([k, v]) => `${k}:${v}`)
+          .join(",");
+      }
+      function decodeBuild(q) {
+        if (!q) return {};
+        return q.split(",").reduce((a, p) => {
+          const [k, v] = p.split(":");
+          if (k && v) a[k] = Number(v);
+          return a;
+        }, {});
+      }
+
+      let selectedClassId = CLASSES[0].id; // default: Gladiator
+      let build = (() => {
+        const params = new URLSearchParams(location.search);
+        return decodeBuild(params.get("build"));
+      })();
+
+      const classGrid = document.getElementById("class-grid");
+      const gridActive = document.getElementById("grid-active");
+      const gridPassive = document.getElementById("grid-passive");
+      const gridStigma = document.getElementById("grid-stigma");
+      const countActive = document.getElementById("count-active");
+      const countPassive = document.getElementById("count-passive");
+      const countStigma = document.getElementById("count-stigma");
+
+      function renderClasses() {
+        classGrid.innerHTML = "";
+        CLASSES.forEach((c) => {
+          const btn = document.createElement("button");
+          btn.className = [
+            "flex items-center gap-2 rounded-xl border p-2 text-left transition h-full w-full overflow-visible",
+            selectedClassId === c.id
+              ? "border-cyan-400/60 bg-cyan-500/10 text-cyan-100 shadow-[0_0_15px_rgba(34,211,238,0.35)]"
+              : "border-slate-700 bg-[#0b1120] text-slate-200 hover:bg-[#0d1426]",
+          ].join(" ");
+          const iconWrap = document.createElement("div");
+          iconWrap.className = `flex-shrink-0 ml-[-0px] ${
+            selectedClassId === c.id ? "text-cyan-200" : "text-slate-300"
+          }`;
+          iconWrap.appendChild(
+            classIcon(c.icon, c.name, selectedClassId === c.id)
+          );
+          const className = document.createElement("div");
+          className.className = `text-center text-lg font-semibold mt-1 text-slate-300 class-name`;
+          className.textContent = c.name;
+          const labels = document.createElement("div");
+          labels.className = "flex-1 text-center";
+          labels.appendChild(className);
+          btn.append(iconWrap, labels);
+          btn.addEventListener("click", () => {
+            if (selectedClassId === c.id) return; // No change if clicking the same class
+
+            // Reset the build for the new class
+            build = {};
+
+            // Clear loadout slots
+            document
+              .querySelectorAll(
+                ".loadout-active, .loadout-passive, .loadout-stigma"
+              )
+              .forEach((slot) => {
+                slot.innerHTML = "";
+                slot.setAttribute("data-skill-id", "");
+                slot.classList.remove("bg-opacity-20");
+              });
+
+            // Update the selected class
+            selectedClassId = c.id;
+
+            // Update URL to remove any build parameters for the previous class
+            history.replaceState(null, "", window.location.pathname);
+
+            // Re-render everything
+            render();
+          });
+          classGrid.appendChild(btn);
+        });
+      }
+
+      function tile(skill) {
+        const level = build[skill.id] || 1;
+        const pct = skill.maxLevel ? level / skill.maxLevel : 0;
+        const btn = document.createElement("button");
+
+        // Check if skill is in any loadout slot
+        const isInLoadout =
+          Array.from(document.querySelectorAll(`[data-skill-id="${skill.id}"]`))
+            .length > 0;
+
+        btn.className = [
+          "skill-tile group relative aspect-square w-full overflow-hidden rounded-xl border",
+          level > 0 ? "border-cyan-400/60" : "border-slate-700",
+          isInLoadout
+            ? "ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900"
+            : "",
+          "bg-gradient-to-br from-[#0b1120] to-[#0a0f1e]",
+        ].join(" ");
+
+        // For skills with maxLevel 1, show Lv.1/1 instead of Lv.1/undefined
+        const maxLevelDisplay =
+          skill.maxLevel === undefined ? "1" : skill.maxLevel;
+        btn.title = `${skill.name} (Lv.${level}${
+          skill.maxLevel !== undefined ? `/${maxLevelDisplay}` : ""
+        })${isInLoadout ? " (In Loadout)" : ""}`;
+        btn.innerHTML = `
+          <div class="absolute inset-0 grid place-items-center">
+            <svg viewBox="0 0 24 24" class="h-6 w-6 text-cyan-200 opacity-80"><path d="M12 2l6 6-6 6-6-6 6-6zm0 8l6 6-6 6-6-6 6-6z" fill="currentColor"/></svg>
+          </div>
+          <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800"><div class="h-full bg-cyan-400 transition-all" style="width:${
+            pct * 100
+          }%"></div></div>
+          <div class="absolute right-1 top-1"><span class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]">Lv.${level}</span></div>
+          ${
+            isInLoadout
+              ? '<div class="absolute left-1 top-1 text-yellow-400">★</div>'
+              : ""
+          }
+        `;
+
+        // Right click to cycle through skill levels
+        btn.addEventListener("mousedown", (e) => {
+          if (e.button === 2) {
+            // Right mouse button
+            e.preventDefault(); // Prevent context menu
+            const currentLevel = build[skill.id] || 1;
+            const maxLevel = skill.levels ? skill.levels.length : 0;
+
+            // Cycle through levels: 1 -> 2 -> ... -> max -> 1 -> ...
+            build[skill.id] = currentLevel < maxLevel ? currentLevel + 1 : 1;
+
+            // If the skill is in the loadout, update its level display
+            const loadoutSlot = document.querySelector(
+              `[data-skill-id="${skill.id}"]`
+            );
+            if (loadoutSlot) {
+              loadoutSlot.title = `${skill.name} (Lv.${build[skill.id]})`;
+            }
+
+            render();
+            return false;
+          }
+        });
+
+        // Prevent context menu on right-click
+        btn.oncontextmenu = () => false;
+
+        // Left click to add/remove from loadout
+        btn.addEventListener("click", (e) => {
+          if (e.button === 0) {
+            // Left click only
+            const skillType = skill.type; // 'active', 'passive', or 'stigma'
+            const loadoutSlots = document.querySelectorAll(
+              `.loadout-${skillType}`
+            );
+
+            // Check if skill is already in loadout
+            const existingSlot = Array.from(loadoutSlots).find(
+              (slot) => slot.dataset.skillId === skill.id
+            );
+
+            if (existingSlot) {
+              // Remove from loadout
+              existingSlot.innerHTML = "";
+              existingSlot.dataset.skillId = "";
+              existingSlot.title = "";
+            } else {
+              // Find first empty slot
+              const emptySlot = Array.from(loadoutSlots).find(
+                (slot) => !slot.dataset.skillId
+              );
+
+              if (emptySlot) {
+                // Add to loadout - show only the skill icon
+                emptySlot.innerHTML = `
+                  <div class="h-full w-full flex items-center justify-center p-1">
+                    <div class="text-2xl">${getSkillIcon(skill.type)}</div>
+                  </div>
+                `;
+                emptySlot.dataset.skillId = skill.id;
+                emptySlot.title = `${skill.name} (Lv.${level})`;
+              }
+            }
+
+            // Re-render to update visual feedback
+            render();
+          }
+        });
+
+        return btn;
+      }
+
+      function renderSkills() {
+        const skills = CLASS_SKILLS[selectedClassId] || [];
+        const active = skills.filter((s) => s.type === "active");
+        const passive = skills.filter((s) => s.type === "passive");
+        const stigma = skills.filter((s) => s.type === "stigma");
+
+        gridActive.innerHTML = "";
+        active.forEach((s) => gridActive.appendChild(tile(s)));
+        gridPassive.innerHTML = "";
+        passive.forEach((s) => gridPassive.appendChild(tile(s)));
+        gridStigma.innerHTML = "";
+        stigma.forEach((s) => gridStigma.appendChild(tile(s)));
+        countActive.textContent = active.length;
+        countPassive.textContent = passive.length;
+        countStigma.textContent = stigma.length;
+      }
+
+      function render() {
+        renderClasses();
+        renderSkills();
+      }
+
+      // Add event listener for Max Levels button
+      document
+        .getElementById("btn-max-levels")
+        .addEventListener("click", () => {
+          // Get all skills for the current class
+          const skills = CLASS_SKILLS[selectedClassId] || [];
+
+          // Set all skills to their maximum level
+          skills.forEach((skill) => {
+            if (skill.type === "active" || skill.type === "passive") {
+              build[skill.id] = skill.maxLevel || 1;
+            } else if (skill.type === "stigma") {
+              build[skill.id] = 1; // Stigma skills typically have max level 1
+            }
+          });
+
+          // Update the character level to max (45)
+          document.getElementById("character-level").value = 45;
+
+          // Re-render the skills to reflect the changes
+          render();
+        });
+
+      document.getElementById("btn-reset").addEventListener("click", () => {
+        // Reset build and clear URL parameters
+        build = {};
+        // Reset character level to 1
+        document.getElementById("character-level").value = 1;
+        history.replaceState(null, "", window.location.pathname);
+
+        // Reset all skill levels to 0
+        document.querySelectorAll(".skill-tile").forEach((tile) => {
+          tile.setAttribute("data-level", "0");
+          tile.classList.remove("ring-2", "ring-cyan-400");
+          const levelBadge = tile.querySelector(".level-badge");
+          if (levelBadge) {
+            levelBadge.textContent = "";
+          }
+        });
+
+        // Clear loadout slots
+        document
+          .querySelectorAll(
+            ".loadout-active, .loadout-passive, .loadout-stigma"
+          )
+          .forEach((slot) => {
+            slot.innerHTML = "";
+            slot.setAttribute("data-skill-id", "");
+            slot.classList.remove("bg-opacity-20");
+          });
+
+        // Reset counters
+        document.getElementById("count-active").textContent = "0";
+        document.getElementById("count-passive").textContent = "0";
+        document.getElementById("count-stigma").textContent = "0";
+
+        // Re-render skills to ensure UI is in sync
+        renderSkills();
+      });
+      document.getElementById("btn-share").addEventListener("click", () => {
+        const q = encodeBuild(build);
+        const url = `${location.origin}${
+          location.pathname
+        }?build=${encodeURIComponent(q)}`;
+        navigator.clipboard &&
+          navigator.clipboard.writeText(url).catch(() => {});
+        alert("Share URL copied to clipboard!\n" + url);
+      });
+
+      (function runSelfTests() {
+        try {
+          const original = { bolt: 3, blink: 1, aegis: 0 };
+          const round = decodeBuild(encodeBuild(original));
+          console.assert(
+            round.bolt === 3 && round.blink === 1 && (round.aegis ?? 0) === 0,
+            "encode/decode failed"
+          );
+          const clampUp = Math.min(3, 5),
+            clampDown = Math.max(0, -1);
+          console.assert(
+            clampUp === 3 && clampDown === 0,
+            "clamp logic failed"
+          );
+          console.assert(
+            JSON.stringify(decodeBuild(null)) === JSON.stringify({}),
+            "decode empty failed"
+          );
+          console.assert(
+            JSON.stringify(decodeBuild("")) === JSON.stringify({}),
+            "decode empty string failed"
+          );
+          const noisy = decodeBuild("bolt:2,,x:,blink:1");
+          console.assert(
+            noisy.bolt === 2 && noisy.blink === 1 && noisy.x === undefined,
+            "decode robustness failed"
+          );
+          console.assert(
+            encodeBuild({}) === "",
+            "encode empty should be empty string"
+          );
+          const trailing = decodeBuild("bolt:2,");
+          console.assert(trailing.bolt === 2, "trailing comma decode failed");
+        } catch (e) {
+          console.warn("Self-tests error:", e);
+        }
+      })();
+
+      render();
+    </script>
+  </body>
+</html>
