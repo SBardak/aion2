@@ -8,19 +8,21 @@
     <script src="skills-data.js"></script>
     <script>
       console.log("CLASS_SKILLS loaded:", CLASS_SKILLS);
-      
+
       // Function to create skill tooltip HTML
       function createSkillTooltip(skill, currentLevel) {
         const maxLevel = skill.maxLevel || 1;
-        const levelData = skill.levels ? skill.levels.find(l => l.level === currentLevel) || {} : {};
-        const description = levelData.desc || 'No description available.';
+        const levelData = skill.levels
+          ? skill.levels.find((l) => l.level === currentLevel) || {}
+          : {};
+        const description = levelData.desc || "No description available.";
         const levelPercentage = (currentLevel / maxLevel) * 100;
-        
+
         return `
           <div class="skill-tooltip">
             <div class="skill-tooltip-header">
               <span class="skill-tooltip-name">${skill.name}</span>
-              <span class="skill-tooltip-type">${skill.type || 'active'}</span>
+              <span class="skill-tooltip-type">${skill.type || "active"}</span>
             </div>
             <div class="skill-tooltip-level">
               Level ${currentLevel} / ${maxLevel}
@@ -63,7 +65,7 @@
         box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
         z-index: 10;
       }
-      
+
       .skill-tooltip {
         position: absolute;
         bottom: calc(100% + 10px);
@@ -82,16 +84,47 @@
         transition: all 0.2s ease;
         transform-origin: bottom center;
         will-change: transform, opacity;
+        text-align: center;
       }
       
+      /* Position tooltip for loadout skills */
+      .loadout-active .skill-tooltip,
+      .loadout-passive .skill-tooltip,
+      .loadout-stigma .skill-tooltip {
+        bottom: calc(100% + 10px);
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%) scale(0.95);
+        transform-origin: bottom center;
+      }
+      
+      .loadout-active .skill-tooltip::after,
+      .loadout-passive .skill-tooltip::after,
+      .loadout-stigma .skill-tooltip::after {
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px;
+        border-style: solid;
+        border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+      }
+
       .skill-tile:hover .skill-tooltip {
         opacity: 1;
         transform: translateX(-50%) scale(1) translateY(-5px);
         visibility: visible;
       }
       
+      .loadout-active:hover .skill-tooltip,
+      .loadout-passive:hover .skill-tooltip,
+      .loadout-stigma:hover .skill-tooltip {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(5px);
+        visibility: visible;
+      }
+
       .skill-tooltip::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 100%;
         left: 50%;
@@ -100,7 +133,7 @@
         border-style: solid;
         border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
       }
-      
+
       .skill-tooltip-header {
         display: flex;
         justify-content: space-between;
@@ -109,13 +142,13 @@
         margin-bottom: 8px;
         border-bottom: 1px solid rgba(56, 189, 248, 0.2);
       }
-      
+
       .skill-tooltip-name {
         font-weight: 600;
         color: #e2e8f0;
         font-size: 1.1em;
       }
-      
+
       .skill-tooltip-type {
         font-size: 0.8em;
         background: rgba(56, 189, 248, 0.2);
@@ -124,19 +157,19 @@
         border-radius: 10px;
         text-transform: capitalize;
       }
-      
+
       .skill-tooltip-level {
         font-size: 0.9em;
         color: #94a3b8;
         margin-bottom: 8px;
       }
-      
+
       .skill-tooltip-desc {
         font-size: 0.9em;
         line-height: 1.5;
         color: #cbd5e1;
       }
-      
+
       .skill-tooltip-level-bar {
         height: 4px;
         background: rgba(255, 255, 255, 0.1);
@@ -144,7 +177,7 @@
         margin: 8px 0;
         overflow: hidden;
       }
-      
+
       .skill-tooltip-level-fill {
         height: 100%;
         background: linear-gradient(90deg, #38bdf8, #0ea5e9);
@@ -549,16 +582,16 @@
         // For skills with maxLevel 1, show Lv.1/1 instead of Lv.1/undefined
         const maxLevelDisplay =
           skill.maxLevel === undefined ? "1" : skill.maxLevel;
-        
+
         // Remove title attribute as we're using custom tooltips now
-        btn.title = '';
-        
+        btn.title = "";
+
         // Use the skill's ID to construct the image path
         const skillImagePath = `Skill-icons/${skill.id}.png`;
 
         // Create the tooltip HTML
         const tooltipHTML = createSkillTooltip(skill, level);
-        
+
         // Set the button's HTML, including the tooltip
         btn.innerHTML = `
           <div class="absolute inset-0 flex flex-col p-1">
@@ -571,15 +604,23 @@
           </div>
           <!-- Text container - positioned absolutely to move independently -->
           <div class="absolute bottom-3 left-0 right-0 text-center px-1">
-            <div class="text-xs font-medium text-slate-200 truncate">${skill.name}</div>
+            <div class="text-xs font-medium text-slate-200 truncate">${
+              skill.name
+            }</div>
           </div>
           <div class="absolute inset-x-0 bottom-0 h-1 bg-slate-800">
-            <div class="h-full bg-cyan-400 transition-all" style="width:${pct * 100}%"></div>
+            <div class="h-full bg-cyan-400 transition-all" style="width:${
+              pct * 100
+            }%"></div>
           </div>
           <div class="absolute right-0.5 top-0 z-10">
             <span class="rounded-md border border-cyan-400/40 bg-cyan-500/10 px-1 py-0.5 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.35)]">Lv.${level}</span>
           </div>
-          ${isInLoadout ? '<div class="absolute left-1 top-1 text-yellow-400">★</div>' : ''}
+          ${
+            isInLoadout
+              ? '<div class="absolute left-1 top-1 text-yellow-400">★</div>'
+              : ""
+          }
           <!-- Tooltip container -->
           ${tooltipHTML}
         `;
@@ -608,18 +649,26 @@
             e.preventDefault(); // Prevent context menu
             const currentLevel = build[skill.id] || 1;
             const maxLevel = skill.levels ? skill.levels.length : 0;
+            const newLevel = currentLevel < maxLevel ? currentLevel + 1 : 1;
+            
+            // Update the skill level in the build
+            build[skill.id] = newLevel;
 
-            // Cycle through levels: 1 -> 2 -> ... -> max -> 1 -> ...
-            build[skill.id] = currentLevel < maxLevel ? currentLevel + 1 : 1;
+            // If the skill is in the loadout, update its display
+            const loadoutSlots = document.querySelectorAll(`[data-skill-id="${skill.id}"]`);
+            loadoutSlots.forEach(loadoutSlot => {
+              // Update the tooltip to show the new level
+              const tooltipHTML = createSkillTooltip(skill, newLevel);
+              const tooltipContainer = loadoutSlot.querySelector('.skill-tooltip');
+              if (tooltipContainer) {
+                tooltipContainer.outerHTML = tooltipHTML;
+              }
+              
+              // Update the title attribute for the loadout slot
+              loadoutSlot.title = `${skill.name} (Lv.${newLevel})`;
+            });
 
-            // If the skill is in the loadout, update its level display
-            const loadoutSlot = document.querySelector(
-              `[data-skill-id="${skill.id}"]`
-            );
-            if (loadoutSlot) {
-              loadoutSlot.title = `${skill.name} (Lv.${build[skill.id]})`;
-            }
-
+            // Update the skill display
             render();
             return false;
           }
@@ -654,14 +703,15 @@
               );
 
               if (emptySlot) {
-                // Add to loadout - show the actual skill icon
+                // Add to loadout - show the actual skill icon with tooltip
                 const skillImagePath = `Skill-icons/${skill.id}.png`;
                 emptySlot.innerHTML = `
-                  <div class="h-full w-full flex flex-col items-center justify-center p-1">
+                  <div class="h-full w-full flex flex-col items-center justify-center p-1 relative group">
                     <div class="w-10 h-10 bg-slate-800/50 rounded-md flex items-center justify-center bg-cover bg-center" 
                          style="background-image: url('${skillImagePath}'); background-size: contain; background-repeat: no-repeat;">
                     </div>
                     <div class="text-xs mt-1 text-center truncate w-full">${skill.name}</div>
+                    ${createSkillTooltip(skill, level)}
                   </div>
                 `;
 
@@ -709,6 +759,33 @@
         renderSkills();
       }
 
+      // Function to update loadout tooltips with current skill levels
+      function updateLoadoutTooltips() {
+        const loadoutSlots = document.querySelectorAll('[data-skill-id]');
+        loadoutSlots.forEach(slot => {
+          const skillId = slot.dataset.skillId;
+          if (!skillId) return;
+          
+          // Find the skill data
+          const skills = CLASS_SKILLS[selectedClassId] || [];
+          const skill = skills.find(s => s.id === skillId);
+          if (!skill) return;
+          
+          // Get current level from build
+          const level = build[skillId] || 1;
+          
+          // Update the tooltip
+          const tooltipHTML = createSkillTooltip(skill, level);
+          const tooltipContainer = slot.querySelector('.skill-tooltip');
+          if (tooltipContainer) {
+            tooltipContainer.outerHTML = tooltipHTML;
+          }
+          
+          // Update the title
+          slot.title = `${skill.name} (Lv.${level})`;
+        });
+      }
+
       // Add event listener for Max Levels button
       document
         .getElementById("btn-max-levels")
@@ -728,6 +805,9 @@
           // Update the character level to max (45)
           document.getElementById("character-level").value = 45;
 
+          // Update all loadout tooltips
+          updateLoadoutTooltips();
+          
           // Re-render the skills to reflect the changes
           render();
         });
