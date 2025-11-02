@@ -411,14 +411,12 @@ var DEMO_SKILLS = [
     type: "stigma",
     name: "Shadow Strike",
     max: 1,
-    icon: "⚔️",
   },
   {
     id: "phoenixrebirth",
     type: "stigma",
     name: "Phoenix Rebirth",
     max: 1,
-    icon: "🔥",
     desc: "Upon death, revive with 30% HP and deal 200% magic damage to nearby enemies. 10 minute cooldown.",
   },
   {
@@ -426,7 +424,6 @@ var DEMO_SKILLS = [
     type: "stigma",
     name: "Time Lock",
     max: 1,
-    icon: "⏱️",
     desc: "Freeze time for all enemies in a 10m radius for 3 seconds. 3 minute cooldown.",
   },
   {
@@ -434,7 +431,6 @@ var DEMO_SKILLS = [
     type: "stigma",
     name: "Mirror Image",
     max: 1,
-    icon: "👥",
     desc: "Create 2 mirror images that deal 30% of your damage and have 50% of your HP. Lasts 15 seconds. 2 minute cooldown.",
   },
   {
@@ -442,7 +438,6 @@ var DEMO_SKILLS = [
     type: "stigma",
     name: "Divine Shield",
     max: 1,
-    icon: "🛡️",
     desc: "Become immune to all damage for 5 seconds. 8 minute cooldown.",
   },
   {
@@ -450,7 +445,6 @@ var DEMO_SKILLS = [
     type: "stigma",
     name: "Apocalypse",
     max: 1,
-    icon: "☄️",
     desc: "Call down a meteor shower dealing 500% magic damage to all enemies in target area over 5 seconds. 10 minute cooldown.",
   },
 ];
@@ -458,17 +452,48 @@ var DEMO_SKILLS = [
 var RANGER_SKILLS = [
   // Active Skills
   {
-    id: "boltarrow",
+    id: "precisionshot",
     type: "active",
-    name: "Bolt Arrow",
-    maxLevel: 5,
+    name: "Precision Shot",
+    maxLevel: 9,
     levels: [
-      { level: 1, desc: "Deal 120 magic damage." },
-      { level: 2, desc: "Deal 150 magic damage." },
-      { level: 3, desc: "Deal 180 magic damage." },
-      { level: 4, desc: "Deal 210 magic damage + 5% crit." },
-      { level: 5, desc: "Deal 250 magic damage + 10% crit." },
+      { level: 1, desc: "Deal 120-130 physical damage to a target." },
+      { level: 2, desc: "Deal 150-160 physical damage to a target." },
+      { level: 3, desc: "Deal 180-190 physical damage to a target." },
+      { level: 4, desc: "Deal 210-220 physical damage to a target + 5% crit." },
+      {
+        level: 5,
+        desc: "Deal 250-260 physical damage to a target + 10% crit.",
+      },
+      {
+        level: 6,
+        desc: "Deal 280-290 physical damage to a target + 15% crit.",
+      },
+      {
+        level: 7,
+        desc: "Deal 310-320 physical damage to a target + 20% crit.",
+      },
+      {
+        level: 8,
+        desc: "Deal 340-350 physical damage to a target + 25% crit.",
+      },
+      {
+        level: 9,
+        desc: "Deal 370-380 physical damage to a target + 30% crit.",
+      },
     ],
+    mpcost: 0,
+    mpregen: 144,
+    cooldown: 1,
+    castingTime: 0,
+    range: 20,
+    aoe: false,
+    canMove: true,
+    enhancements: `1. +20% MP regeneration
+2. Restores HP equal to 5% of the damage dealt
+3. +50 Accuracy
+4. On hit, reduces the cooldown of "Precision Arrow" by 1s
+5. Allows an immediate follow-up with "Explosive Arrow" after the shot`,
   },
 ];
 

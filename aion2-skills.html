@@ -18,6 +18,77 @@
         const description = levelData.desc || "No description available.";
         const levelPercentage = (currentLevel / maxLevel) * 100;
 
+        // Get field values, checking level-specific data first, then skill-level data
+        const getField = (field) =>
+          levelData[field] !== undefined ? levelData[field] : skill[field];
+
+        const mpcost = getField("mpcost");
+        const mpregen = getField("mpregen");
+        const cooldown = getField("cooldown");
+        const castingTime = getField("castingTime");
+        const range = getField("range");
+        const aoe = getField("aoe");
+        const canMove = getField("canMove");
+        const enhancements = getField("enhancements");
+
+        // Build details HTML
+        let detailsHTML = "";
+
+        // Add MPcost if available
+        if (mpcost !== undefined) {
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">MP Cost:</span> ${mpcost}</div>`;
+        }
+
+        // Add MPregen if available
+        if (mpregen !== undefined) {
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">MP Regen:</span> ${mpregen}</div>`;
+        }
+
+        // Add Cooldown if available
+        if (cooldown !== undefined) {
+          const cooldownText = cooldown === 0 ? "Instant" : `${cooldown}s`;
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">Cooldown:</span> ${cooldownText}</div>`;
+        }
+
+        // Add Casting Time if available
+        if (castingTime !== undefined) {
+          const castingText = castingTime === 0 ? "Instant" : `${castingTime}s`;
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">Casting:</span> ${castingText}</div>`;
+        }
+
+        // Add Range if available
+        if (range !== undefined) {
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">Range:</span> ${range}m</div>`;
+        }
+
+        // Add AOE indicator if available
+        if (aoe !== undefined) {
+          const aoeText = aoe ? 'Yes' : 'No';
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">AOE:</span> ${aoeText}</div>`;
+        }
+
+        // Add Movement indicator if available
+        if (canMove !== undefined) {
+          const moveText = canMove ? 'Yes' : 'No';
+          detailsHTML += `<div class="skill-detail"><span class="detail-label">Can Move:</span> ${moveText}</div>`;
+        }
+
+        // Add Enhancements if available
+        if (enhancements) {
+          detailsHTML += `<div class="mt-2"><div class="text-cyan-300 text-sm font-medium">Enhancements:</div>`;
+          // Split by newline and remove empty lines
+          const enhancementLines = enhancements
+            .split("\n")
+            .filter((line) => line.trim() !== "");
+          enhancementLines.forEach((line) => {
+            // Remove the number and dot from the start of the line if present
+            const cleanLine = line.replace(/^\d+\.\s*/, "");
+            detailsHTML += `<div class="skill-enhancement">• ${cleanLine}</div>`;
+          });
+          detailsHTML += `</div>`;
+        }
+
+        // Skill tooltip
         return `
           <div class="skill-tooltip">
             <div class="skill-tooltip-header">
@@ -33,6 +104,11 @@
             <div class="skill-tooltip-desc">
               ${description}
             </div>
+            ${
+              detailsHTML
+                ? `<div class="skill-tooltip-divider"></div><div class="skill-details">${detailsHTML}</div>`
+                : ""
+            }
           </div>
         `;
       }
@@ -71,12 +147,12 @@
         bottom: calc(100% + 10px);
         left: 50%;
         transform: translateX(-50%) scale(0.95);
-        width: 280px;
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(56, 189, 248, 0.3);
+        width: 550px;
+        background: rgba(15, 23, 42, 0.98);
+        border: 1px solid rgba(56, 189, 248, 0.4);
         border-radius: 8px;
-        padding: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        padding: 14px 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         backdrop-filter: blur(8px);
         z-index: 1000;
         opacity: 0;
@@ -84,9 +160,10 @@
         transition: all 0.2s ease;
         transform-origin: bottom center;
         will-change: transform, opacity;
-        text-align: center;
+        text-align: left;
+        line-height: 1.5;
       }
-      
+
       /* Position tooltip for loadout skills */
       .loadout-active .skill-tooltip,
       .loadout-passive .skill-tooltip,
@@ -97,7 +174,7 @@
         transform: translateX(-50%) scale(0.95);
         transform-origin: bottom center;
       }
-      
+
       .loadout-active .skill-tooltip::after,
       .loadout-passive .skill-tooltip::after,
       .loadout-stigma .skill-tooltip::after {
@@ -114,7 +191,7 @@
         transform: translateX(-50%) scale(1) translateY(-5px);
         visibility: visible;
       }
-      
+
       .loadout-active:hover .skill-tooltip,
       .loadout-passive:hover .skill-tooltip,
       .loadout-stigma:hover .skill-tooltip {
@@ -138,15 +215,16 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 8px;
-        margin-bottom: 8px;
-        border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.25);
       }
 
       .skill-tooltip-name {
         font-weight: 600;
-        color: #e2e8f0;
-        font-size: 1.1em;
+        color: #f8fafc;
+        font-size: 1.2em;
+        letter-spacing: 0.3px;
       }
 
       .skill-tooltip-type {
@@ -160,14 +238,16 @@
 
       .skill-tooltip-level {
         font-size: 0.9em;
-        color: #94a3b8;
-        margin-bottom: 8px;
+        color: #a8b3c1;
+        margin: 8px 0 10px 0;
       }
 
       .skill-tooltip-desc {
-        font-size: 0.9em;
+        font-size: 1.35em;
         line-height: 1.5;
-        color: #cbd5e1;
+        color: #e2e8f0;
+        margin: 12px 0 10px 0;
+        padding: 0 2px;
       }
 
       .skill-tooltip-level-bar {
@@ -650,20 +730,23 @@
             const currentLevel = build[skill.id] || 1;
             const maxLevel = skill.levels ? skill.levels.length : 0;
             const newLevel = currentLevel < maxLevel ? currentLevel + 1 : 1;
-            
+
             // Update the skill level in the build
             build[skill.id] = newLevel;
 
             // If the skill is in the loadout, update its display
-            const loadoutSlots = document.querySelectorAll(`[data-skill-id="${skill.id}"]`);
-            loadoutSlots.forEach(loadoutSlot => {
+            const loadoutSlots = document.querySelectorAll(
+              `[data-skill-id="${skill.id}"]`
+            );
+            loadoutSlots.forEach((loadoutSlot) => {
               // Update the tooltip to show the new level
               const tooltipHTML = createSkillTooltip(skill, newLevel);
-              const tooltipContainer = loadoutSlot.querySelector('.skill-tooltip');
+              const tooltipContainer =
+                loadoutSlot.querySelector(".skill-tooltip");
               if (tooltipContainer) {
                 tooltipContainer.outerHTML = tooltipHTML;
               }
-              
+
               // Update the title attribute for the loadout slot
               loadoutSlot.title = `${skill.name} (Lv.${newLevel})`;
             });
@@ -710,7 +793,9 @@
                     <div class="w-10 h-10 bg-slate-800/50 rounded-md flex items-center justify-center bg-cover bg-center" 
                          style="background-image: url('${skillImagePath}'); background-size: contain; background-repeat: no-repeat;">
                     </div>
-                    <div class="text-xs mt-1 text-center truncate w-full">${skill.name}</div>
+                    <div class="text-xs mt-1 text-center truncate w-full">${
+                      skill.name
+                    }</div>
                     ${createSkillTooltip(skill, level)}
                   </div>
                 `;
@@ -761,26 +846,26 @@
 
       // Function to update loadout tooltips with current skill levels
       function updateLoadoutTooltips() {
-        const loadoutSlots = document.querySelectorAll('[data-skill-id]');
-        loadoutSlots.forEach(slot => {
+        const loadoutSlots = document.querySelectorAll("[data-skill-id]");
+        loadoutSlots.forEach((slot) => {
           const skillId = slot.dataset.skillId;
           if (!skillId) return;
-          
+
           // Find the skill data
           const skills = CLASS_SKILLS[selectedClassId] || [];
-          const skill = skills.find(s => s.id === skillId);
+          const skill = skills.find((s) => s.id === skillId);
           if (!skill) return;
-          
+
           // Get current level from build
           const level = build[skillId] || 1;
-          
+
           // Update the tooltip
           const tooltipHTML = createSkillTooltip(skill, level);
-          const tooltipContainer = slot.querySelector('.skill-tooltip');
+          const tooltipContainer = slot.querySelector(".skill-tooltip");
           if (tooltipContainer) {
             tooltipContainer.outerHTML = tooltipHTML;
           }
-          
+
           // Update the title
           slot.title = `${skill.name} (Lv.${level})`;
         });
@@ -807,7 +892,7 @@
 
           // Update all loadout tooltips
           updateLoadoutTooltips();
-          
+
           // Re-render the skills to reflect the changes
           render();
         });
