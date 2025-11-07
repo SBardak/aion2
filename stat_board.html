@@ -1,0 +1,3750 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Adjacency Stat Board</title>
+    <style>
+          :root{
+            --bg:#0e1116;
+            --panel:#12161d;
+            --tile:#1b2230;
+            --tile-edge:#0b0f15;
+            --tile-face:#0f141d;
+            --tile-hover:#273146;
+            --glyph:#3c4a64;
+            --sel:#53a7ff;
+            --sel2:#71d98e;
+            --sel3:#d9c56e;
+            --disabled:#2a3345;
+            --text:#e7ecf3;
+            --muted:#b5c1d8;
+            --danger:#ff6a6a;
+            --ok:#71d98e;
+            --warn:#d9c56e;
+          }
+
+          html,body{height:100%}
+          body{margin:0;background:radial-gradient(1200px 800px at 50% -20%, #1a2030 0%, var(--bg) 55%);color:var(--text);font:15px/1.45 system-ui,Segoe UI,Roboto,Inter,Arial}
+
+          .wrap{max-width:1100px;margin:24px auto;padding:16px}
+
+          .topbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:linear-gradient(180deg,#141a24,#0f141d);border:1px solid #212a3a;border-radius:12px;box-shadow:0 15px 35px rgba(0,0,0,.35) inset, 0 10px 30px rgba(0,0,0,.25)}
+          .topbar .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #2a3447;background:#0e1520;border-radius:999px}
+          .topbar input[type="number"]{width:90px;background:#0b1220;color:var(--text);border:1px solid #2a3447;border-radius:8px;padding:6px 8px}
+          .btn{cursor:pointer;background:#162033;border:1px solid #2a3447;color:var(--text);padding:8px 12px;border-radius:10px;transition:.15s;user-select:none}
+          .btn:hover{filter:brightness(1.15)}
+          .btn:active{transform:translateY(1px)}
+          .btn.red{border-color:#432426;background:#1a0f12;color:#ffdede}
+
+          .tabs{display:flex;gap:8px;margin:18px 0}
+          .tab{
+            cursor:pointer;
+            padding:8px 16px;
+            border:1px solid #2a3447;
+            border-radius:999px;
+            transition:all 0.2s ease;
+            font-weight:500;
+            position: relative;
+            z-index: 1;
+          }
+
+          /* Base colors for all tabs */
+          .tabs .tab[data-page="nezekan"] { background-color:#1b1b1b; color:#fff; }
+          .tabs .tab[data-page="zikel"] { background-color:#204322; color:#fff; }
+          .tabs .tab[data-page="vaizel"] { background-color:#203a60; color:#fff; }
+          .tabs .tab[data-page="triniel"] { background-color:#4a1f24; color:#fff; }
+          .tabs .tab[data-page="ariel"] { background-color:#5a3a15; color:#fff; }
+          .tabs .tab[data-page="aspel"] { background-color:#3d1b80; color:#fff; }
+
+          /* Active state with glow */
+          .tab.active {
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.3);
+            filter: brightness(1.2);
+          }
+
+          /* Specific glow colors for each tab when active */
+          .tabs .tab[data-page="nezekan"].active { box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.3); }
+          .tabs .tab[data-page="zikel"].active { box-shadow: 0 0 15px 5px rgba(46, 204, 64, 0.3); }
+          .tabs .tab[data-page="vaizel"].active { box-shadow: 0 0 15px 5px rgba(52, 152, 219, 0.3); }
+          .tabs .tab[data-page="triniel"].active { box-shadow: 0 0 15px 5px rgba(231, 76, 60, 0.3); }
+          .tabs .tab[data-page="ariel"].active { box-shadow: 0 0 15px 5px rgba(230, 126, 34, 0.3); }
+          .tabs .tab[data-page="aspel"].active { box-shadow: 0 0 15px 5px rgba(143, 65, 177, 0.3); }
+
+          .panel{background:#0f141d;border:1px solid #2a3447;border-radius:12px;padding:18px;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+
+          .grid{--size:11;--rows:11;--gap:10px;display:grid;grid-template-columns:repeat(var(--size), 56px);grid-template-rows:repeat(var(--rows), 56px);gap:var(--gap);justify-content:center;height:auto;}
+
+          .tile{position:relative;background:linear-gradient(180deg, var(--tile) 0%, var(--tile-face) 100%);border-radius:10px;box-shadow:0 3px 0 var(--tile-edge) inset, 0 0 0 1px #243044;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:.15s}
+
+
+
+          .tile .glyph{opacity:.55;font-weight:700;letter-spacing:.02em;filter:drop-shadow(0 0 1px #000);color:var(--glyph)}
+
+          .tile[data-type="gray"] .glyph{color:#747474}
+          .tile[data-type="green"] .glyph{color:#6be79c}
+          .tile[data-type="blue"] .glyph{color:#7fc3ff}
+          .tile[data-type="gold"] .glyph{color:#ffb74a}
+
+          .tile.lock{cursor:default}
+
+          .tile.selected{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 12px 2px var(--sel)}
+          .tile.selected[data-type="green"]{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 12px 2px var(--sel2)}
+          .tile.selected[data-type="gold"]{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 14px 3px #ffb74a}
+
+          /* Gray tiles get a neutral gray glow instead of blue */
+          .tile.selected[data-type="gray"]{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 12px 2px #9aa0a6}
+
+          .tile.disabled{filter:grayscale(.3) brightness(.7);cursor:not-allowed}
+
+          .tile.center{outline:2px solid #ffffff;box-shadow:0 0 18px 2px rgba(255,255,255,.6)}
+
+          /* Adjacent (next-to-unlock) highlight */
+          .tile.adjacent{outline:none}
+      .tile.adjacent::after{
+        content:"";
+        position:absolute; inset:-5px; border-radius:14px;
+        border:4px solid #ffd800; /* bright yellow */
+        pointer-events:none;
+        animation:pulse-adj-yellow 1.9s ease-in-out infinite;
+        box-shadow:none;
+      }
+      .tile.selected.adjacent::after{content:none}
+
+
+          /* Empty tiles remain in the grid but are invisible and non-interactive */
+          .tile.blank{opacity:0;pointer-events:none;box-shadow:none;background:none}
+          /* But in layout edit mode, show faint placeholders so you can paint */
+          .edit .tile.blank{opacity:.15;pointer-events:auto;box-shadow:0 0 0 1px #1f2636 inset;background:repeating-linear-gradient(45deg, #111723 0 6px, #0f141d 6px 12px)}
+
+          .badge{position:absolute;right:6px;bottom:6px;background:#0b1220;border:1px solid #2a3447;border-radius:999px;padding:3px 6px;font-size:12px;color:#a9b6cf}
+
+          .tooltip{pointer-events:none;position:fixed;z-index:5;transform:translate(-50%,-120%);min-width:160px;max-width:240px;background:#0b1220;border:1px solid #2a3447;border-radius:10px;padding:10px;box-shadow:0 25px 50px rgba(0,0,0,.45);display:none}
+          .tooltip strong{color:#fff}
+          .tooltip .sub{color:#a9b6cf}
+
+          .meta{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
+          .meter{height:10px;border-radius:999px;background:#111827;border:1px solid #273044;overflow:hidden}
+          .meter>span{display:block;height:100%;background:linear-gradient(90deg,#3aa7ff,#6be79c);width:0}
+
+          details.config{margin-top:18px}
+          details.config textarea{width:100%;min-height:180px;background:#0b1220;color:#d6e1f7;border:1px solid #2a3447;border-radius:10px;padding:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+          details.config summary{cursor:pointer;color:#9fb7ff}
+
+          @keyframes pulse-adj-yellow{
+        0%{ border-color:#ffd800; opacity:0.95 }
+        50%{ border-color:rgba(255,216,0,0); opacity:0.2 }
+        100%{ border-color:#ffd800; opacity:0.95 }
+      }50%{border-color:#d76000;opacity:.75}100%{border-color:#d40000;opacity:.95}}@media (max-width: 720px){
+            .grid{grid-template-columns:repeat(var(--size), 44px);grid-auto-rows:44px;--gap:8px}
+          }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar" style="flex-direction: column; gap: 12px">
+        <div
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+          "
+        >
+          <div class="pill">
+            Total Points: <input id="cap" type="number" min="1" step="1" />
+          </div>
+          <div class="pill">Spent: <strong id="spent">0</strong></div>
+          <div class="pill">Remaining: <strong id="remain">0</strong></div>
+          <button class="btn" id="exportBtn">Export Build</button>
+          <button class="btn" id="importBtn">Import Build</button>
+          <button class="btn red" id="resetBtn">Reset All</button>
+        </div>
+        <div style="display: flex; width: 100%; gap: 16px; align-items: center">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="color: #9fb7ff">Budget</span>
+            <div class="meter" style="width: 220px">
+              <span id="meter"></span>
+            </div>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="pill" style="gap: 6px">
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                cursor: pointer;
+              "
+            >
+              <input type="checkbox" id="editToggle" /> Layout edit mode
+            </label>
+          </div>
+          <div class="pill" id="counts">
+            Active: <b id="activeCnt">0</b> • Blank: <b id="blankCnt">0</b>
+          </div>
+          <div class="pill" id="editTips" style="display: none">
+            Click: toggle blank/active • Alt+Click: cycle type
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs" id="tabs"></div>
+      <div class="panel">
+        <div id="gridHost"></div>
+
+        <details class="config">
+          <summary>
+            Open config editor (JSON) – tweak costs, colors, runes, and layout
+          </summary>
+          <p>
+            Paste/edit JSON below and click <em>Apply</em>. Any entry object can
+            have: <code>type</code> ("gray"|"blue"|"green"|"gold"),
+            <code>cost</code> (number), <code>name</code> (string),
+            <code>value</code> (string), <code>glyph</code> (string). You can
+            change <code>gridSize</code> and add/remove pages.
+          </p>
+          <textarea id="cfgArea"></textarea>
+          <div style="display: flex; gap: 8px; margin-top: 8px">
+            <button class="btn" id="applyCfg">Apply</button>
+            <button class="btn" id="copyCfg">Copy</button>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+      // --------- CONFIG (restored pre-override) ---------
+      const DEFAULT_CONFIG = {
+        pointsCap: 136,
+        gridSize: 11,
+        pages: [
+          {
+            id: "nezekan",
+            name: "Nezekan",
+            layout: {
+              0: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              1: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              2: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              4: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              5: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              6: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              8: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              9: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              10: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              11: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              13: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              14: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              15: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              17: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              18: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              19: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              21: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              22: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              23: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              24: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              26: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              27: {
+                name: "Path",
+                cost: 1,
+                type: "blue",
+              },
+              28: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              30: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              31: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              32: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              34: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              37: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              39: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              41: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              43: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              44: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              45: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              46: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              47: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              48: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              49: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              50: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              51: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              52: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              53: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              54: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              55: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              58: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              62: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              65: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              66: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              67: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              68: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              69: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              70: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              71: {
+                name: "Path",
+                cost: 1,
+                type: "gray",
+              },
+              72: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              73: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              74: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              75: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              76: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              77: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              79: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              81: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              83: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              86: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              88: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              89: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              90: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              92: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              93: {
+                name: "Path",
+                cost: 1,
+                type: "blue",
+              },
+              94: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              96: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              97: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              98: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              99: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              101: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              102: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              103: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              105: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              106: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              107: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              109: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              110: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              111: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              112: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              114: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              115: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              116: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              118: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              119: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              120: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+            },
+          },
+          {
+            id: "zikel",
+            name: "Zikel",
+            layout: {
+              0: {
+                type: "gold",
+                cost: 1,
+                name: "Barrier",
+                value: "+5 Resist",
+                glyph: "ᚱ",
+              },
+              1: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              2: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              3: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              4: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              5: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              6: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              7: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              8: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              9: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              10: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              11: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              13: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              15: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              18: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              21: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              22: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              23: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              24: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              26: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              27: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              28: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              29: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              30: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              31: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              32: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              33: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              35: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              36: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              37: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              39: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              41: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              43: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              44: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              45: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              46: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              48: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              50: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              51: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              52: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              53: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              54: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              56: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              59: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              60: {
+                type: "green",
+                cost: 2,
+                name: "Vitality",
+                value: "+20 HP",
+                glyph: "ᚠ",
+              },
+              61: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              64: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              66: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              67: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              68: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              69: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              70: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              72: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              74: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              75: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              76: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              77: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              79: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              81: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              83: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              84: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              85: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              87: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              88: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              89: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              90: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              91: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              92: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              93: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              94: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              96: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              97: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              98: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              99: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              102: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              105: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              107: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              109: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              110: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              111: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              112: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              113: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              114: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              115: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              116: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              117: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              118: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              119: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              120: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+            },
+          },
+          {
+            id: "vaizel",
+            name: "Vaizel",
+            layout: {
+              0: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              1: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              2: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              4: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              5: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              6: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              7: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              8: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              9: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              10: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              11: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              13: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              14: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              15: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              17: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              19: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              21: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              22: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              23: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              24: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              26: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              27: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              28: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              29: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              30: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              31: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              32: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              34: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              37: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              39: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              42: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              44: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              45: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              46: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              47: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              48: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              49: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              50: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              51: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              52: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              53: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              54: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              55: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              58: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              62: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              65: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              66: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              67: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              68: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              69: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              70: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              71: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              72: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              73: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              74: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              75: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              76: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              78: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              81: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              83: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              86: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              88: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              89: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              90: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              91: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              92: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              93: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              94: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              96: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              97: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              98: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              99: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              101: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              103: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              105: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              106: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              107: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              109: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              110: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              111: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              112: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              113: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              114: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              115: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              116: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              118: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              119: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              120: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+            },
+          },
+          {
+            id: "triniel",
+            name: "Triniel",
+            gridSize: {
+              rows: 11,
+              cols: 13,
+            },
+            layout: {
+              0: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              2: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              3: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              4: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              5: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              7: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              8: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              9: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              10: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              12: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              13: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              15: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              18: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              19: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              20: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              23: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              25: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              26: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              27: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              28: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              29: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              30: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              31: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              33: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              34: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              35: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              36: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              37: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              38: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              41: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              43: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              47: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              50: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              52: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              53: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              54: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              55: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              56: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              57: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              58: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              59: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              60: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              61: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              62: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              63: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              64: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              65: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              67: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              69: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              71: {
+                type: "blue",
+                cost: 1,
+                name: "Path",
+                value: "+1",
+                glyph: "ᚨ",
+              },
+              73: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              75: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              77: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              78: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              79: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              80: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              81: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              82: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              83: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              84: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              85: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              86: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              87: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              88: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              89: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              90: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              92: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              95: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              99: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              101: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              104: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              105: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              106: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              107: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              108: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              109: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              111: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              112: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              113: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              114: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              115: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              116: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              117: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              119: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              122: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              123: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              124: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              127: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              129: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              130: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              132: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              133: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              134: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              135: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              137: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              138: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              139: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              140: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+            },
+          },
+          {
+            id: "ariel",
+            name: "Ariel",
+            gridSize: {
+              rows: 11,
+              cols: 15,
+            },
+            layout: {
+              0: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              1: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              3: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              6: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              7: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              8: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              9: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              10: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              11: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              12: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              13: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              14: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              16: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              18: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              19: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              20: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              21: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              24: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              26: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              28: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              30: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              31: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              32: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              33: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              36: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              39: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              41: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              42: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              43: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              45: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              48: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              50: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              51: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              52: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              53: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              54: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              56: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              58: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              60: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              61: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              62: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              63: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              64: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              65: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              67: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              69: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              70: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              71: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              72: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              73: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              74: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              75: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              77: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              80: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              81: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              83: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              84: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              87: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              89: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              90: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              91: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              92: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              93: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              94: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              95: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              97: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              99: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              100: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              101: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              102: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              103: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              104: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              106: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              108: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              110: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              111: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              112: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              113: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              114: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              116: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              119: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              121: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              122: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              123: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              125: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              128: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              131: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              132: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              133: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              134: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              136: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              138: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              140: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              143: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              144: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              145: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              146: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              148: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              150: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              151: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              152: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              153: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              154: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              155: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              156: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              157: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              158: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              161: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+            },
+          },
+          {
+            id: "aspel",
+            name: "Aspel",
+            gridSize: {
+              rows: 11,
+              cols: 15,
+            },
+            layout: {
+              0: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              1: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              2: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              3: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              5: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              6: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              7: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              8: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              9: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              10: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              11: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              12: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              13: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              14: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              17: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              21: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              23: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              25: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              27: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              30: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              31: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              32: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              34: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              35: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              36: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              37: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              38: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              39: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              40: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              41: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              42: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              45: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              47: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              48: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              49: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              51: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              54: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              57: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              58: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              59: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              60: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              64: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              65: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              66: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              67: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              68: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              69: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              70: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              71: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              72: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              74: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              75: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              76: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              77: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              80: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              84: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              87: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              88: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              89: {
+                name: "Tile",
+                cost: 1,
+                type: "gold",
+              },
+              90: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              92: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              93: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              94: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              95: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              96: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              97: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              98: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              99: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              100: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              104: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              105: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              106: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              107: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              110: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              113: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              115: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              116: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              117: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              119: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              122: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              123: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              124: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              125: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              126: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              127: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              128: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              129: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              130: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              132: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              133: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              134: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              137: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              139: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              141: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              143: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              147: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              150: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              151: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              152: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              153: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              154: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              155: {
+                name: "Tile",
+                cost: 1,
+                type: "blue",
+              },
+              156: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              157: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              158: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              159: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+              161: {
+                name: "Tile",
+                cost: 1,
+                type: "green",
+              },
+              162: {
+                name: "Tile",
+                cost: 1,
+                type: "gray",
+              },
+            },
+          },
+        ],
+      };
+
+      // ---------- Page Themes (ONLY panel background color per page) ----------
+      const THEMES = {
+        nezekan: { bg: "#1b1b1b" }, // Gray
+        zikel: { bg: "#113413" }, // Green
+        vaizel: { bg: "#162c4c" }, // Blue
+        triniel: { bg: "#401016" }, // Red
+        ariel: { bg: "#442b0d" }, // Orange
+        aspel: { bg: "#221241" }, // Purple
+      };
+
+      function applyTheme(pageId) {
+        const t = THEMES[pageId] || {};
+        const panel = document.querySelector(".panel");
+        if (panel) {
+          panel.style.background = t.bg || "transparent";
+        }
+      }
+
+      // ---------- Utilities ----------
+      const el = (q) => document.querySelector(q);
+      const $ = (tag, props = {}, ...kids) => {
+        const n = document.createElement(tag);
+        Object.assign(n, props);
+        kids.forEach((k) => n.append(k));
+        return n;
+      };
+      const centerIndex = (width, height = width) => {
+        // If only one argument is provided, it's treated as a square grid
+        const centerX = Math.floor(width / 2);
+        const centerY = Math.floor(height / 2);
+        return centerY * width + centerX;
+      };
+      const neighbors4 = (i, size) => {
+        const up = i - size,
+          down = i + size,
+          left = i % size ? i - 1 : -1,
+          right = i % size === size - 1 ? -1 : i + 1;
+        return [up, down, left, right].filter(
+          (j) =>
+            j >= 0 &&
+            j < size * size &&
+            !(i % size === 0 && j === i - 1) &&
+            !(i % size === size - 1 && j === i + 1)
+        );
+      };
+      const encode = (obj) =>
+        btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+      const decode = (str) => JSON.parse(decodeURIComponent(escape(atob(str))));
+
+      // Procedural seeding for pages that don't have a manual layout
+      function seedPage(page) {
+        const gridSize = page.gridSize?.cols || CFG.gridSize;
+        const choices = [
+          {
+            type: "blue",
+            cost: 1,
+            name: "Barrier",
+            value: "+5 Resist",
+            glyph: "ᚱ",
+          },
+          {
+            type: "green",
+            cost: 2,
+            name: "Vitality",
+            value: "+20 HP",
+            glyph: "ᚠ",
+          },
+          {
+            type: "gold",
+            cost: 3,
+            name: "Keystone",
+            value: "+10 All",
+            glyph: "ᛟ",
+          },
+        ];
+        page.layout = page.layout || {};
+        const N = gridSize * gridSize;
+        for (let i = 0; i < N; i++) {
+          if (page.layout[i]) continue; // respect manual
+          if (Math.random() < 0.18) {
+            const p = {
+              ...choices[Math.floor(Math.random() * choices.length)],
+            };
+            if (Math.random() < 0.12) p.cost = 4; // occasional expensive
+            page.layout[i] = p;
+          }
+        }
+        const c = centerIndex(gridSize);
+        for (const d of [-gridSize, -1, 1, gridSize]) {
+          if (!page.layout[c + d])
+            page.layout[c + d] = {
+              type: "blue",
+              cost: 1,
+              name: "Path",
+              value: "+1",
+              glyph: "ᚨ",
+            };
+        }
+      }
+
+      // ---------- State ----------
+      let CFG = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      const state = {
+        spentByPage: new Map(),
+        selected: new Map(),
+        currentPage: DEFAULT_CONFIG.pages[0].id,
+        editMode: false,
+      };
+
+      function totalSpent() {
+        let n = 0;
+        for (const v of state.spentByPage.values()) n += v;
+        return n;
+      }
+      function remaining() {
+        return Math.max(0, CFG.pointsCap - totalSpent());
+      }
+      function ensureMaps() {
+        for (const p of CFG.pages) {
+          if (!state.selected.has(p.id)) state.selected.set(p.id, new Set());
+          if (!state.spentByPage.has(p.id)) state.spentByPage.set(p.id, 0);
+        }
+      }
+
+      // ---------- Rendering ----------
+      function renderTabs() {
+        const host = el("#tabs");
+        host.innerHTML = "";
+        CFG.pages.forEach((p) => {
+          const t = document.createElement("div");
+          t.className = "tab" + (state.currentPage === p.id ? " active" : "");
+          t.textContent = p.name;
+          t.dataset.page = p.id;
+          t.onclick = () => {
+            state.currentPage = p.id;
+            applyTheme(p.id);
+            renderAll();
+          };
+          host.append(t);
+        });
+      }
+
+      function countsFor(page) {
+        const size = CFG.gridSize;
+        const total = size * size;
+        const center = 1; // center always exists
+        const active = Object.keys(page.layout).length + center;
+        const blank = total - active;
+        return { active, blank, total };
+      }
+
+      function renderGrid() {
+        const host = el("#gridHost");
+        host.innerHTML = "";
+        const page = CFG.pages.find((p) => p.id === state.currentPage);
+        const cols = page.gridSize?.cols || CFG.gridSize;
+        const rows = page.gridSize?.rows || CFG.gridSize;
+        const grid = $.call(null, "div", { className: "grid" });
+        if (state.editMode) grid.classList.add("edit");
+        grid.style.setProperty("--size", cols);
+        grid.style.setProperty("--rows", rows);
+
+        const sel = state.selected.get(page.id);
+        const center = Math.floor(rows / 2) * cols + Math.floor(cols / 2);
+
+        // Calculate total cells based on rows and columns
+        for (let i = 0; i < rows * cols; i++) {
+          const meta = page.layout[i];
+          const node = $.call(null, "div", { className: "tile" });
+          node.dataset.idx = i;
+
+          if (i === center) {
+            node.classList.add("center", "lock");
+            node.title = "Center";
+            node.append(
+              $.call(null, "div", { className: "glyph", innerText: "⚔" })
+            );
+            grid.append(node);
+            continue;
+          }
+
+          if (!meta) {
+            node.classList.add("blank");
+            node.onclick = () => {
+              if (!state.editMode) return;
+              paintToggle(i, page.id);
+            };
+            grid.append(node);
+            continue;
+          }
+
+          node.dataset.type = meta.type || "blue";
+          const glyph =
+            (meta && meta.glyph) || ["ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚱ", "ᚲ", "ᚷ"][i % 7];
+          node.append(
+            $.call(null, "div", { className: "glyph", innerText: glyph })
+          );
+
+          const cost = meta?.cost ?? 1;
+          node.append(
+            $.call(null, "div", { className: "badge", innerText: cost })
+          );
+
+          if (sel.has(i)) node.classList.add("selected");
+
+          const canPick = isPickable(i, page.id);
+          if (!state.editMode && !sel.has(i) && canPick)
+            node.classList.add("adjacent");
+          if (!canPick && !state.editMode) node.classList.add("disabled");
+
+          if (state.editMode) {
+            node.title = "Alt+Click: cycle type";
+            node.onclick = (e) => {
+              if (e.altKey) {
+                cycleType(i, page.id);
+              } else {
+                paintToggle(i, page.id);
+              }
+            };
+          } else {
+            const tipName = meta?.name || "Tile";
+            const tipVal = meta?.value || `Cost ${cost}`;
+            node.addEventListener("mousemove", (e) =>
+              showTip(`${tipName}`, `${tipVal}`, e.pageX, e.pageY)
+            );
+            node.addEventListener("mouseleave", hideTip);
+            node.onclick = () => toggle(i, page.id);
+          }
+
+          grid.append(node);
+        }
+
+        host.append(grid);
+
+        // update counts
+        const c = countsFor(page);
+        el("#activeCnt").innerText = c.active;
+        el("#blankCnt").innerText = c.blank;
+      }
+
+      function renderHUD() {
+        el("#cap").value = CFG.pointsCap;
+        el("#spent").innerText = totalSpent();
+        el("#remain").innerText = remaining();
+        el("#meter").style.width =
+          Math.min(100, (100 * totalSpent()) / CFG.pointsCap) + "%";
+        el("#editTips").style.display = state.editMode ? "" : "none";
+      }
+
+      function renderCfgEditor() {
+        el("#cfgArea").value = JSON.stringify(CFG, null, 2);
+      }
+      function renderAll() {
+        ensureMaps();
+        applyTheme(state.currentPage);
+        renderTabs();
+        renderGrid();
+        renderHUD();
+        renderCfgEditor();
+      }
+
+      // ---------- Rules ----------
+      function isAdjacentToSelected(idx, pageId) {
+        const currentPage = CFG.pages.find((p) => p.id === pageId);
+        const width = currentPage.gridSize?.cols || CFG.gridSize;
+        const height = currentPage.gridSize?.rows || width;
+        const sel = state.selected.get(pageId);
+        const nb = neighbors4(idx, width);
+        if (idx === centerIndex(width, height)) return true;
+        for (const j of nb) {
+          if (sel.has(j) || j === centerIndex(width, height)) return true;
+        }
+        return false;
+      }
+
+      function isPickable(idx, pageId) {
+        const p = CFG.pages.find((p) => p.id === pageId);
+        const meta = p.layout[idx];
+        const cost = meta?.cost ?? 1;
+        const sel = state.selected.get(pageId);
+        if (!meta && !sel.has(idx)) return; // ensure UI guard
+        if (!meta) return false;
+        if (sel.has(idx)) return true; // you can always unpick
+        if (!isAdjacentToSelected(idx, pageId)) return false;
+        if (remaining() < cost) return false;
+        return true;
+      }
+
+      function toggle(idx, pageId) {
+        const p = CFG.pages.find((p) => p.id === pageId);
+        const meta = p.layout[idx];
+        const cost = meta?.cost ?? 1;
+        const sel = state.selected.get(pageId);
+        if (sel.has(idx)) {
+          sel.delete(idx);
+          state.spentByPage.set(pageId, state.spentByPage.get(pageId) - cost);
+          pruneDisconnected(pageId);
+        } else {
+          if (!isPickable(idx, pageId)) return; // guard
+          sel.add(idx);
+          state.spentByPage.set(
+            pageId,
+            (state.spentByPage.get(pageId) || 0) + cost
+          );
+        }
+        renderAll();
+      }
+
+      // ---------- Layout edit helpers ----------
+      function paintToggle(idx, pageId) {
+        const page = CFG.pages.find((p) => p.id === pageId);
+        if (page.layout[idx]) {
+          // turn to blank
+          delete page.layout[idx];
+          const sel = state.selected.get(pageId);
+          if (sel.has(idx)) sel.delete(idx);
+        } else {
+          // make active default tile
+          page.layout[idx] = { name: "Tile", cost: 1, type: "gray" };
+        }
+        renderAll();
+      }
+      function cycleType(idx, pageId) {
+        const page = CFG.pages.find((p) => p.id === pageId);
+        const t = page.layout[idx]?.type || "gray";
+        const order = ["gray", "blue", "green", "gold"];
+        const next = order[(order.indexOf(t) + 1) % order.length];
+        if (page.layout[idx]) page.layout[idx].type = next;
+        renderAll();
+      }
+
+      // If a deselection breaks connectivity to the center, auto-unselect stranded clusters and refund points
+      function pruneDisconnected(pageId) {
+        const currentPage = CFG.pages.find((p) => p.id === pageId);
+        const size = currentPage.gridSize?.cols || CFG.gridSize;
+        const center = centerIndex(size);
+        const sel = state.selected.get(pageId);
+        const visited = new Set();
+        const q = [];
+        for (const j of neighbors4(center, size)) {
+          if (sel.has(j)) {
+            visited.add(j);
+            q.push(j);
+          }
+        }
+        while (q.length) {
+          const v = q.shift();
+          for (const n of neighbors4(v, size)) {
+            if (sel.has(n) && !visited.has(n)) {
+              visited.add(n);
+              q.push(n);
+            }
+          }
+        }
+        const page = CFG.pages.find((p) => p.id === pageId);
+        const toRemove = [];
+        for (const s of sel) {
+          if (!visited.has(s)) {
+            toRemove.push(s);
+          }
+        }
+        if (toRemove.length) {
+          let refund = 0;
+          for (const i of toRemove) {
+            refund += page.layout[i]?.cost ?? 1;
+            sel.delete(i);
+          }
+          state.spentByPage.set(pageId, state.spentByPage.get(pageId) - refund);
+        }
+      }
+
+      // ---------- Tooltip ----------
+      const tip = el("#tooltip");
+      function showTip(title, sub, x, y) {
+        if (state.editMode) return;
+        tip.style.display = "block";
+        tip.innerHTML = `<strong>${title}</strong><div class="sub">${sub}</div>`;
+        tip.style.left = x + "px";
+        tip.style.top = y + "px";
+      }
+      function hideTip() {
+        tip.style.display = "none";
+      }
+
+      // ---------- Export / Import / Reset ----------
+      function exportBuild() {
+        const payload = {
+          cfg: CFG,
+          build: [...state.selected.entries()].map(([pid, set]) => [
+            pid,
+            [...set],
+          ]),
+        };
+        const url = location.origin + location.pathname + "#" + encode(payload);
+        navigator.clipboard.writeText(url).catch(() => {});
+        alert(
+          "Build URL copied to clipboard. Share or bookmark it to restore this build."
+        );
+      }
+
+      function importBuild() {
+        const hash = prompt("Paste a build URL (or the encoded part after #):");
+        if (!hash) return;
+        let data = null;
+        try {
+          data = hash.includes("#") ? decode(hash.split("#")[1]) : decode(hash);
+        } catch (e) {
+          alert("Could not decode.");
+          return;
+        }
+        CFG = data.cfg;
+        state.selected = new Map(
+          data.build.map(([pid, arr]) => [pid, new Set(arr)])
+        );
+        state.spentByPage = new Map(CFG.pages.map((p) => [p.id, 0]));
+        for (const [pid, set] of state.selected) {
+          let s = 0;
+          const page = CFG.pages.find((p) => p.id === pid);
+          for (const i of set) {
+            s += page.layout[i]?.cost ?? 1;
+          }
+          state.spentByPage.set(pid, s);
+        }
+        state.currentPage = CFG.pages[0].id;
+        renderAll();
+      }
+
+      function resetAll() {
+        for (const p of CFG.pages) {
+          state.selected.set(p.id, new Set());
+          state.spentByPage.set(p.id, 0);
+        }
+        renderAll();
+      }
+
+      // ---------- Config editor ----------
+      function applyCfg() {
+        try {
+          const next = JSON.parse(el("#cfgArea").value);
+          CFG = next;
+          ensureMaps();
+          renderAll();
+        } catch (e) {
+          alert("Invalid JSON");
+        }
+      }
+      function copyCfg() {
+        navigator.clipboard.writeText(el("#cfgArea").value);
+      }
+
+      // ---------- Init ----------
+      function initFromHash() {
+        if (location.hash.length > 1) {
+          try {
+            const data = decode(location.hash.slice(1));
+            CFG = data.cfg;
+            state.selected = new Map(
+              data.build.map(([pid, arr]) => [pid, new Set(arr)])
+            );
+          } catch {}
+        }
+      }
+
+      ensureMaps();
+      initFromHash();
+      // Seed only pages without manual layouts
+      for (const p of CFG.pages) {
+        if (!p.layout || Object.keys(p.layout).length === 0) seedPage(p);
+      }
+
+      document.getElementById("cap").addEventListener("change", (e) => {
+        CFG.pointsCap = Math.max(1, +e.target.value || 1);
+        renderHUD();
+      });
+      document.getElementById("exportBtn").onclick = exportBuild;
+      document.getElementById("importBtn").onclick = importBuild;
+      document.getElementById("resetBtn").onclick = resetAll;
+      document.getElementById("applyCfg").onclick = applyCfg;
+      document.getElementById("copyCfg").onclick = copyCfg;
+      document.getElementById("editToggle").addEventListener("change", (e) => {
+        state.editMode = e.target.checked;
+        renderAll();
+      });
+
+      renderAll();
+
+      // ---------- Minimal Self‑Tests ----------
+      (function runTests() {
+        console.group("Adjacency Stat Board – tests");
+        try {
+          // Test 1: center index
+          const cols = 15;
+          const rows = 11;
+          const expected = Math.floor(rows / 2) * cols + Math.floor(cols / 2);
+          const actual = centerIndex(cols, rows);
+          console.log(
+            `centerIndex(${cols}, ${rows}) = ${actual}, expected ${expected}`
+          );
+          console.assert(
+            actual === expected,
+            `centerIndex failed: expected ${expected} but got ${actual}`
+          );
+
+          // Test 2: neighbors4 length and that it excludes diagonals at center
+          const ctr = centerIndex(cols, rows);
+          const nbs = neighbors4(ctr, cols);
+          console.assert(
+            nbs.length === 4,
+            `neighbors4 at center should have 4, got ${nbs.length}`
+          );
+
+          // Test 3: budget enforcement when selecting a neighbor of center
+          const before = remaining();
+          const pid = CFG.pages[0].id;
+          const testPage1 = CFG.pages[0];
+          const gridSize1 = testPage1.gridSize?.cols || CFG.gridSize;
+          const first = neighbors4(centerIndex(gridSize1), gridSize1)[0];
+          const meta = CFG.pages[0].layout[first] || { cost: 1 };
+          state.selected.get(pid).add(first);
+          state.spentByPage.set(
+            pid,
+            (state.spentByPage.get(pid) || 0) + meta.cost
+          );
+          console.assert(
+            remaining() === before - meta.cost,
+            "budget not decremented correctly"
+          );
+          state.selected.get(pid).delete(first);
+          state.spentByPage.set(
+            pid,
+            (state.spentByPage.get(pid) || 0) - meta.cost
+          );
+          renderHUD();
+
+          // Test 4: pruneDisconnected refunds stranded tiles
+          const testPage2 = CFG.pages[0];
+          const gridSize2 = testPage2.gridSize?.cols || CFG.gridSize;
+          const cIdx = centerIndex(gridSize2);
+          const n1 = neighbors4(cIdx, gridSize2)[0];
+          const n2 = neighbors4(n1, gridSize2).find((v) => v !== cIdx) || n1;
+          const page0 = CFG.pages[0];
+          const cost1 = page0.layout[n1]?.cost ?? 1;
+          const cost2 = page0.layout[n2]?.cost ?? 1;
+          const selSet = state.selected.get(pid);
+          selSet.add(n1);
+          selSet.add(n2);
+          state.spentByPage.set(
+            pid,
+            (state.spentByPage.get(pid) || 0) + cost1 + cost2
+          );
+          // remove the bridge n1 and prune
+          selSet.delete(n1);
+          state.spentByPage.set(pid, state.spentByPage.get(pid) - cost1);
+          const spentBefore = state.spentByPage.get(pid);
+          pruneDisconnected(pid);
+          console.assert(
+            state.spentByPage.get(pid) <= spentBefore - cost2,
+            "pruneDisconnected did not refund properly"
+          );
+          // cleanup
+          selSet.clear();
+          state.spentByPage.set(pid, 0);
+
+          console.log("All tests passed");
+        } catch (e) {
+          console.error(e);
+        }
+        console.groupEnd();
+      })();
+    </script>
+  </body>
+</html>
