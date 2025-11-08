@@ -78,8 +78,8 @@
       header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 16px;
+        justify-content: center;
+        position: relative;
         border: 1px solid var(--border);
         background: linear-gradient(180deg, #0b1224, #0f172a);
         padding: 18px 20px;
@@ -99,8 +99,9 @@
       }
       .tz {
         font-weight: 600;
-        color: #94a3b8;
+        color: #e2e8f0;
         font-size: 14px;
+        margin-bottom: 4px;
       }
       .section-title {
         margin: 26px 4px 12px;
@@ -385,6 +386,21 @@
       .spacer-row {
         height: 18px;
       }
+      .time-info {
+        margin: 16px auto 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        max-width: 90%;
+      }
+      .timezone-note {
+        margin-top: 4px;
+        font-size: 12px;
+        opacity: 0.8;
+      }
     </style>
   </head>
   <body>
@@ -396,11 +412,14 @@
     <div class="wrap">
       <header>
         <h1>AION 2</h1>
-        <div class="tz" id="tz"></div>
       </header>
 
       <div class="section-title">Weekly Schedule</div>
       <div class="grid" id="grid"></div>
+      <div class="time-info">
+        <div class="tz" id="tz"></div>
+        <div class="timezone-note">Times are shown in your device's local time.</div>
+      </div>
 
       <div class="section-title">Custom countdown</div>
       <div class="timer" id="timer">
@@ -461,8 +480,6 @@
           <!-- Right: Daily Quests, Weekly Quests -->
         </div>
       </div>
-
-      <footer>Times are shown in your device's local time.</footer>
     </div>
 
     <script>
