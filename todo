@@ -9,10 +9,7 @@ Stat board:
   value = +1
 - Display total stats and bonuses
 
-Pages:
-- Nice header and buttons
-- Move between the 3 pages and have same style
-- Update schedule/checklist page
+- Update schedule/checklist page with real data
 
 
 
