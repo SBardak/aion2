@@ -77,29 +77,41 @@
       }
       header {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        gap: 0px;
         position: relative;
-        border: 1px solid var(--border);
-        background: linear-gradient(180deg, #0b1224, #0f172a);
-        padding: 18px 20px;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        border: none;
+        background: transparent;
+        padding: 24px 20px;
         margin-bottom: 20px;
-        backdrop-filter: blur(6px);
       }
+      @keyframes flashyShadow {
+        0% { text-shadow: 0 0 5px #fff, 0 0 10px #9d4edd, 0 0 20px #c77dff; } /* Purple */
+        10% { text-shadow: 0 0 5px #fff, 0 0 10px #7d6edd, 0 0 20px #a79dff; } /* Purple-Blue */
+        20% { text-shadow: 0 0 5px #fff, 0 0 10px #5b4edd, 0 0 20px #8d9dff; } /* Blue */
+        30% { text-shadow: 0 0 5px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff; } /* Blue-Teal */
+        40% { text-shadow: 0 0 5px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7; } /* Teal */
+        50% { text-shadow: 0 0 5px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7; } /* Teal-Green */
+        60% { text-shadow: 0 0 5px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d; } /* Green */
+        70% { text-shadow: 0 0 5px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d; } /* Green-Yellow */
+        80% { text-shadow: 0 0 5px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d; } /* Yellow */
+        90% { text-shadow: 0 0 5px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d; } /* Yellow-Orange */
+        100% { text-shadow: 0 0 5px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d; } /* Red */
+      }
+      
       h1 {
         font-size: clamp(28px, 4vw, 36px);
         margin: 0;
         font-family: 'Baloo 2', cursive;
-        font-weight: 800;
+        font-weight: 700;
+        color: #ffffff !important;
         letter-spacing: 0.5px;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        animation: flashyShadow 30s infinite ease-in-out;
       }
       .tz {
         font-weight: 600;
-        color: #e2e8f0;
+        color: #e9e2f0;
         font-size: 14px;
         margin-bottom: 4px;
       }
@@ -401,6 +413,103 @@
         font-size: 12px;
         opacity: 0.8;
       }
+      
+      /* Header and Navigation */
+      header {
+        background: none !important;
+        padding: 20px 0 0;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+      }
+      
+      .header-content {
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background: none !important;
+      }
+      
+      @keyframes titleGlow {
+        0% {
+          color: #8a2be2; /* Purple */
+          text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+        }
+        14.28% {
+          color: #4169e1; /* Blue */
+          text-shadow: 0 0 15px rgba(65, 105, 225, 0.8);
+        }
+        28.56% {
+          color: #00ced1; /* Teal */
+          text-shadow: 0 0 20px rgba(0, 206, 209, 0.9);
+        }
+        42.84% {
+          color: #32cd32; /* Green */
+          text-shadow: 0 0 15px rgba(50, 205, 50, 0.8);
+        }
+        57.12% {
+          color: #ffd700; /* Yellow */
+          text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+        }
+        71.4% {
+          color: #ff8c00; /* Orange */
+          text-shadow: 0 0 15px rgba(255, 140, 0, 0.8);
+        }
+        85.68% {
+          color: #ff4500; /* Red */
+          text-shadow: 0 0 20px rgba(255, 69, 0, 0.9);
+        }
+        100% {
+          color: #ff1493; /* Pink */
+          text-shadow: 0 0 10px rgba(255, 20, 147, 0.7);
+        }
+      }
+
+      header h1 {
+        margin: 0 0 10px 0;
+        padding: 0;
+        font-size: 2.5em;
+        color: #8a2be2; /* Initial color */
+        text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+        background: none !important;
+        display: block;
+        animation: titleGlow 20s ease-in-out infinite;
+        transition: color 0.5s ease, text-shadow 0.5s ease;
+      }
+      
+      .main-nav {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 10px 0 0 0;
+        padding: 0;
+        flex-wrap: wrap;
+      }
+      
+      .nav-btn {
+        background: rgba(17, 24, 39, 0.8);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      
+      .nav-btn:hover {
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      
+      .nav-btn.active {
+        background: rgba(193, 218, 219, 0.603);
+        border-color: rgba(13, 121, 138, 0.8);
+        color: rgba(16, 124, 141, 0.9);
+      }
     </style>
   </head>
   <body>
@@ -412,6 +521,13 @@
     <div class="wrap">
       <header>
         <h1>AION 2</h1>
+        <nav class="main-nav">
+          <a href="aion2-schedule.html" class="nav-btn active">Schedule</a>
+          <a href="#" class="nav-btn">Timers</a>
+          <a href="#" class="nav-btn">Checklists</a>
+          <a href="aion2-skills.html" class="nav-btn">Skill Builder</a>
+          <a href="aion2-stats.html" class="nav-btn">Stat Builder</a>
+        </nav>
       </header>
 
       <div class="section-title">Weekly Schedule</div>
