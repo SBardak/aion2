@@ -86,7 +86,7 @@
             height: auto;
             margin: 0 auto;
           }
-          
+
           /* Special grid sizes for specific pages */
           .grid[data-page="triniel"] { --size: 13; }
           .grid[data-page="ariel"] { --size: 14; }
@@ -212,7 +212,24 @@
             </div>
           </div>
         </div>
-        <div class="meta">
+      </div>
+
+      <div class="tabs" id="tabs"></div>
+      <div class="panel">
+        <div id="gridHost"></div>
+      </div>
+
+      <div
+        style="
+          margin-top: 20px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        "
+      >
+        <div class="meta" style="justify-content: center; width: 100%">
           <div class="pill" style="gap: 6px">
             <label
               style="
@@ -232,13 +249,8 @@
             Click: toggle blank/active • Alt+Click: cycle type
           </div>
         </div>
-      </div>
 
-      <div class="tabs" id="tabs"></div>
-      <div class="panel">
-        <div id="gridHost"></div>
-
-        <details class="config">
+        <details class="config" style="width: 100%; max-width: 800px">
           <summary>
             Open config editor (JSON) – tweak costs, colors, runes, and layout
           </summary>
@@ -249,7 +261,10 @@
             <code>value</code> (string), <code>glyph</code> (string). You can
             change <code>gridSize</code> and add/remove pages.
           </p>
-          <textarea id="cfgArea"></textarea>
+          <textarea
+            id="cfgArea"
+            style="width: 100%; min-height: 200px"
+          ></textarea>
           <div style="display: flex; gap: 8px; margin-top: 8px">
             <button class="btn" id="applyCfg">Apply</button>
             <button class="btn" id="copyCfg">Copy</button>
@@ -261,6 +276,9 @@
     <div id="tooltip" class="tooltip"></div>
 
     <script>
+      // --------- GLOBALS ---------
+      const EDIT_MODE = false; // Set to true to enable edit mode
+
       // --------- CONFIG (restored pre-override) ---------
       const DEFAULT_CONFIG = {
         pointsCap: 136,
@@ -3471,6 +3489,14 @@
         renderGrid();
         renderHUD();
         renderCfgEditor();
+
+        // Show/hide edit mode controls based on EDIT_MODE
+        const editControls = document.querySelector(".meta");
+        const configEditor = document.querySelector(".config");
+        if (editControls)
+          editControls.style.display = EDIT_MODE ? "flex" : "none";
+        if (configEditor)
+          configEditor.style.display = EDIT_MODE ? "block" : "none";
       }
 
       // ---------- Rules ----------
