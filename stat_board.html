@@ -76,25 +76,51 @@
 
           .grid{--size:11;--rows:11;--gap:10px;display:grid;grid-template-columns:repeat(var(--size), 56px);grid-template-rows:repeat(var(--rows), 56px);gap:var(--gap);justify-content:center;height:auto;}
 
-          .tile{position:relative;background:linear-gradient(180deg, var(--tile) 0%, var(--tile-face) 100%);border-radius:10px;box-shadow:0 3px 0 var(--tile-edge) inset, 0 0 0 1px #243044;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:.15s}
+          .tile{position:relative;background:linear-gradient(180deg, var(--tile) 0%, var(--tile-face) 100%);border-radius:6px;box-shadow:0 2px 0 var(--tile-edge) inset, 0 0 0 1px rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:.15s;opacity:0.95;border:1px solid rgba(0,0,0,0.3)}
 
 
 
-          .tile .glyph{opacity:.55;font-weight:700;letter-spacing:.02em;filter:drop-shadow(0 0 1px #000);color:var(--glyph)}
+          .tile .glyph{opacity:0.9;font-weight:700;letter-spacing:.02em;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5));color:var(--glyph)}
 
-          .tile[data-type="gray"] .glyph{color:#747474}
-          .tile[data-type="green"] .glyph{color:#6be79c}
-          .tile[data-type="blue"] .glyph{color:#7fc3ff}
-          .tile[data-type="gold"] .glyph{color:#ffb74a}
+          .tile[data-type="gray"] .glyph::before {
+            content: 'ᛇ';
+            font-size: 1.3em;
+            color: #8a8a8a;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          }
+          .tile[data-type="green"] .glyph::before {
+            content: '八';
+            font-size: 1.4em;
+            color: var(--sel2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          }
+          .tile[data-type="blue"] .glyph::before {
+            content: 'Σ';
+            font-size: 1.3em;
+            color: var(--sel);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          }
+          .tile[data-type="gold"] .glyph::before {
+            content: '⩒';
+            font-size: 1.3em;
+            color: var(--sel3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          }
+          .tile[data-type="gray"] .glyph,
+          .tile[data-type="green"] .glyph,
+          .tile[data-type="blue"] .glyph,
+          .tile[data-type="gold"] .glyph {
+            color: transparent; /* Hide the inner text, we're using ::before content */
+          }
 
           .tile.lock{cursor:default}
 
-          .tile.selected{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 12px 2px var(--sel)}
-          .tile.selected[data-type="green"]{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 12px 2px var(--sel2)}
-          .tile.selected[data-type="gold"]{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 14px 3px #ffb74a}
+          .tile.selected{box-shadow:0 0 0 2px rgba(255,255,255,.1) inset, 0 0 15px 3px var(--sel);opacity:1;transform:scale(0.98);}
+          .tile.selected[data-type="green"]{box-shadow:0 0 0 2px rgba(255,255,255,.1) inset, 0 0 15px 3px var(--sel2);opacity:1;transform:scale(0.98);}
+          .tile.selected[data-type="gold"]{box-shadow:0 0 0 2px rgba(255,255,255,.1) inset, 0 0 16px 4px #ffb74a;opacity:1;transform:scale(0.98);}
 
           /* Gray tiles get a neutral gray glow instead of blue */
-          .tile.selected[data-type="gray"]{box-shadow:0 0 0 2px rgba(255,255,255,.05) inset, 0 0 12px 2px #9aa0a6}
+          .tile.selected[data-type="gray"]{box-shadow:0 0 0 2px rgba(255,255,255,.1) inset, 0 0 15px 3px #9aa0a6;opacity:1;transform:scale(0.98);}
 
           .tile.disabled{filter:grayscale(.3) brightness(.7);cursor:not-allowed}
 
@@ -230,7 +256,7 @@
             layout: {
               0: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               1: {
@@ -245,7 +271,7 @@
               },
               4: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               5: {
@@ -255,12 +281,12 @@
               },
               6: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               8: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               9: {
@@ -270,7 +296,7 @@
               },
               10: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               11: {
@@ -280,7 +306,7 @@
               },
               13: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               14: {
@@ -315,7 +341,7 @@
               },
               22: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               23: {
@@ -334,8 +360,8 @@
                 type: "gray",
               },
               27: {
-                name: "Path",
-                cost: 1,
+                name: "Tile",
+                cost: 3,
                 type: "blue",
               },
               28: {
@@ -345,7 +371,7 @@
               },
               30: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               31: {
@@ -355,7 +381,7 @@
               },
               32: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               34: {
@@ -395,7 +421,7 @@
               },
               46: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               47: {
@@ -420,7 +446,7 @@
               },
               51: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               52: {
@@ -440,7 +466,7 @@
               },
               55: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               58: {
@@ -455,7 +481,7 @@
               },
               65: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               66: {
@@ -475,7 +501,7 @@
               },
               69: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               70: {
@@ -484,7 +510,7 @@
                 type: "gray",
               },
               71: {
-                name: "Path",
+                name: "Tile",
                 cost: 1,
                 type: "gray",
               },
@@ -500,7 +526,7 @@
               },
               74: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               75: {
@@ -540,7 +566,7 @@
               },
               88: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               89: {
@@ -550,7 +576,7 @@
               },
               90: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               92: {
@@ -559,8 +585,8 @@
                 type: "gray",
               },
               93: {
-                name: "Path",
-                cost: 1,
+                name: "Tile",
+                cost: 3,
                 type: "blue",
               },
               94: {
@@ -580,7 +606,7 @@
               },
               98: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               99: {
@@ -615,7 +641,7 @@
               },
               107: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               109: {
@@ -625,7 +651,7 @@
               },
               110: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               111: {
@@ -635,12 +661,12 @@
               },
               112: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               114: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               115: {
@@ -650,7 +676,7 @@
               },
               116: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               118: {
@@ -665,7 +691,7 @@
               },
               120: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
             },
@@ -675,11 +701,10 @@
             name: "Zikel",
             layout: {
               0: {
-                type: "gold",
-                cost: 1,
-                name: "Barrier",
+                name: "Tile",
+                cost: 5,
                 value: "+5 Resist",
-                glyph: "ᚱ",
+                type: "gold",
               },
               1: {
                 name: "Tile",
@@ -698,7 +723,7 @@
               },
               4: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               5: {
@@ -708,7 +733,7 @@
               },
               6: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               7: {
@@ -718,7 +743,7 @@
               },
               8: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               9: {
@@ -728,7 +753,7 @@
               },
               10: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               11: {
@@ -738,7 +763,7 @@
               },
               13: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               15: {
@@ -758,7 +783,7 @@
               },
               22: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               23: {
@@ -783,7 +808,7 @@
               },
               28: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               29: {
@@ -798,7 +823,7 @@
               },
               31: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               32: {
@@ -823,7 +848,7 @@
               },
               37: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               39: {
@@ -853,7 +878,7 @@
               },
               46: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               48: {
@@ -868,7 +893,7 @@
               },
               51: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               52: {
@@ -883,7 +908,7 @@
               },
               54: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               56: {
@@ -897,11 +922,10 @@
                 type: "gray",
               },
               60: {
-                type: "green",
+                name: "Tile",
                 cost: 2,
-                name: "Vitality",
                 value: "+20 HP",
-                glyph: "ᚠ",
+                type: "green",
               },
               61: {
                 name: "Tile",
@@ -915,7 +939,7 @@
               },
               66: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               67: {
@@ -930,7 +954,7 @@
               },
               69: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               70: {
@@ -945,7 +969,7 @@
               },
               74: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               75: {
@@ -975,7 +999,7 @@
               },
               83: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               84: {
@@ -1000,7 +1024,7 @@
               },
               89: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               90: {
@@ -1015,7 +1039,7 @@
               },
               92: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               93: {
@@ -1040,7 +1064,7 @@
               },
               98: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               99: {
@@ -1060,7 +1084,7 @@
               },
               107: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               109: {
@@ -1070,7 +1094,7 @@
               },
               110: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               111: {
@@ -1080,7 +1104,7 @@
               },
               112: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               113: {
@@ -1090,7 +1114,7 @@
               },
               114: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               115: {
@@ -1100,7 +1124,7 @@
               },
               116: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               117: {
@@ -1120,7 +1144,7 @@
               },
               120: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
             },
@@ -1131,7 +1155,7 @@
             layout: {
               0: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               1: {
@@ -1141,7 +1165,7 @@
               },
               2: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               4: {
@@ -1151,7 +1175,7 @@
               },
               5: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               6: {
@@ -1161,7 +1185,7 @@
               },
               7: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               8: {
@@ -1176,7 +1200,7 @@
               },
               10: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               11: {
@@ -1221,7 +1245,7 @@
               },
               23: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               24: {
@@ -1231,7 +1255,7 @@
               },
               26: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               27: {
@@ -1251,7 +1275,7 @@
               },
               30: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               31: {
@@ -1261,7 +1285,7 @@
               },
               32: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               34: {
@@ -1276,7 +1300,7 @@
               },
               39: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               42: {
@@ -1301,7 +1325,7 @@
               },
               47: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               48: {
@@ -1326,7 +1350,7 @@
               },
               52: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               53: {
@@ -1341,7 +1365,7 @@
               },
               55: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               58: {
@@ -1356,7 +1380,7 @@
               },
               65: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               66: {
@@ -1371,7 +1395,7 @@
               },
               68: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               69: {
@@ -1396,7 +1420,7 @@
               },
               73: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               74: {
@@ -1421,7 +1445,7 @@
               },
               81: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               83: {
@@ -1436,7 +1460,7 @@
               },
               88: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               89: {
@@ -1446,7 +1470,7 @@
               },
               90: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               91: {
@@ -1466,7 +1490,7 @@
               },
               94: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               96: {
@@ -1476,7 +1500,7 @@
               },
               97: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               98: {
@@ -1521,7 +1545,7 @@
               },
               110: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               111: {
@@ -1536,7 +1560,7 @@
               },
               113: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               114: {
@@ -1546,7 +1570,7 @@
               },
               115: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               116: {
@@ -1556,7 +1580,7 @@
               },
               118: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               119: {
@@ -1566,7 +1590,7 @@
               },
               120: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
             },
@@ -1586,7 +1610,7 @@
               },
               2: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               3: {
@@ -1601,12 +1625,12 @@
               },
               5: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               7: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               8: {
@@ -1621,7 +1645,7 @@
               },
               10: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               12: {
@@ -1666,7 +1690,7 @@
               },
               26: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               27: {
@@ -1681,7 +1705,7 @@
               },
               29: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               30: {
@@ -1701,7 +1725,7 @@
               },
               34: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               35: {
@@ -1721,7 +1745,7 @@
               },
               38: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               41: {
@@ -1766,7 +1790,7 @@
               },
               56: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               57: {
@@ -1796,7 +1820,7 @@
               },
               62: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               63: {
@@ -1811,7 +1835,7 @@
               },
               65: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               67: {
@@ -1825,11 +1849,10 @@
                 type: "gray",
               },
               71: {
-                type: "blue",
-                cost: 1,
-                name: "Path",
+                cost: 3,
+                name: "Tile",
                 value: "+1",
-                glyph: "ᚨ",
+                type: "blue",
               },
               73: {
                 name: "Tile",
@@ -1843,7 +1866,7 @@
               },
               77: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               78: {
@@ -1858,7 +1881,7 @@
               },
               80: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               81: {
@@ -1888,7 +1911,7 @@
               },
               86: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               87: {
@@ -1933,7 +1956,7 @@
               },
               104: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               105: {
@@ -1953,7 +1976,7 @@
               },
               108: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               109: {
@@ -1973,7 +1996,7 @@
               },
               113: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               114: {
@@ -1988,7 +2011,7 @@
               },
               116: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               117: {
@@ -2033,7 +2056,7 @@
               },
               132: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               133: {
@@ -2048,12 +2071,12 @@
               },
               135: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               137: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               138: {
@@ -2068,7 +2091,7 @@
               },
               140: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
             },
@@ -2088,12 +2111,12 @@
               },
               1: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               3: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               6: {
@@ -2138,7 +2161,7 @@
               },
               14: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               16: {
@@ -2163,17 +2186,17 @@
               },
               21: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               24: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               26: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               28: {
@@ -2183,7 +2206,7 @@
               },
               30: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               31: {
@@ -2198,7 +2221,7 @@
               },
               33: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               36: {
@@ -2223,7 +2246,7 @@
               },
               43: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               45: {
@@ -2238,7 +2261,7 @@
               },
               50: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               51: {
@@ -2253,7 +2276,7 @@
               },
               53: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               54: {
@@ -2278,7 +2301,7 @@
               },
               61: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               62: {
@@ -2288,7 +2311,7 @@
               },
               63: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               64: {
@@ -2313,7 +2336,7 @@
               },
               70: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               71: {
@@ -2328,7 +2351,7 @@
               },
               73: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               74: {
@@ -2338,7 +2361,7 @@
               },
               75: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               77: {
@@ -2373,7 +2396,7 @@
               },
               89: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               90: {
@@ -2383,7 +2406,7 @@
               },
               91: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               92: {
@@ -2398,7 +2421,7 @@
               },
               94: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               95: {
@@ -2423,7 +2446,7 @@
               },
               101: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               102: {
@@ -2433,7 +2456,7 @@
               },
               103: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               104: {
@@ -2458,7 +2481,7 @@
               },
               111: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               112: {
@@ -2473,7 +2496,7 @@
               },
               114: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               116: {
@@ -2488,7 +2511,7 @@
               },
               121: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               122: {
@@ -2513,7 +2536,7 @@
               },
               131: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               132: {
@@ -2528,7 +2551,7 @@
               },
               134: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               136: {
@@ -2538,17 +2561,17 @@
               },
               138: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               140: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               143: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               144: {
@@ -2573,7 +2596,7 @@
               },
               150: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               151: {
@@ -2618,7 +2641,7 @@
               },
               161: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
             },
@@ -2633,7 +2656,7 @@
             layout: {
               0: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               1: {
@@ -2648,7 +2671,7 @@
               },
               3: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               5: {
@@ -2658,7 +2681,7 @@
               },
               6: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               7: {
@@ -2673,7 +2696,7 @@
               },
               9: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               10: {
@@ -2688,7 +2711,7 @@
               },
               12: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               13: {
@@ -2698,7 +2721,7 @@
               },
               14: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               17: {
@@ -2728,7 +2751,7 @@
               },
               30: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               31: {
@@ -2743,7 +2766,7 @@
               },
               34: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               35: {
@@ -2758,7 +2781,7 @@
               },
               37: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               38: {
@@ -2768,7 +2791,7 @@
               },
               39: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               40: {
@@ -2783,7 +2806,7 @@
               },
               42: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               45: {
@@ -2793,7 +2816,7 @@
               },
               47: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               48: {
@@ -2828,7 +2851,7 @@
               },
               59: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               60: {
@@ -2848,7 +2871,7 @@
               },
               66: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               67: {
@@ -2863,7 +2886,7 @@
               },
               69: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               70: {
@@ -2878,7 +2901,7 @@
               },
               72: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               74: {
@@ -2888,7 +2911,7 @@
               },
               75: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               76: {
@@ -2923,7 +2946,7 @@
               },
               89: {
                 name: "Tile",
-                cost: 1,
+                cost: 5,
                 type: "gold",
               },
               90: {
@@ -2933,7 +2956,7 @@
               },
               92: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               93: {
@@ -2948,7 +2971,7 @@
               },
               95: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               96: {
@@ -2963,7 +2986,7 @@
               },
               98: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               99: {
@@ -2983,7 +3006,7 @@
               },
               105: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               106: {
@@ -3018,7 +3041,7 @@
               },
               117: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               119: {
@@ -3028,7 +3051,7 @@
               },
               122: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               123: {
@@ -3043,7 +3066,7 @@
               },
               125: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               126: {
@@ -3053,7 +3076,7 @@
               },
               127: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               128: {
@@ -3068,7 +3091,7 @@
               },
               130: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               132: {
@@ -3083,7 +3106,7 @@
               },
               134: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               137: {
@@ -3113,7 +3136,7 @@
               },
               150: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               151: {
@@ -3123,7 +3146,7 @@
               },
               152: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               153: {
@@ -3138,7 +3161,7 @@
               },
               155: {
                 name: "Tile",
-                cost: 1,
+                cost: 3,
                 type: "blue",
               },
               156: {
@@ -3153,7 +3176,7 @@
               },
               158: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               159: {
@@ -3163,7 +3186,7 @@
               },
               161: {
                 name: "Tile",
-                cost: 1,
+                cost: 2,
                 type: "green",
               },
               162: {
@@ -3231,7 +3254,7 @@
         const choices = [
           {
             type: "blue",
-            cost: 1,
+            cost: 3,
             name: "Barrier",
             value: "+5 Resist",
             glyph: "ᚱ",
@@ -3245,7 +3268,7 @@
           },
           {
             type: "gold",
-            cost: 3,
+            cost: 5,
             name: "Keystone",
             value: "+10 All",
             glyph: "ᛟ",
@@ -3368,11 +3391,8 @@
           }
 
           node.dataset.type = meta.type || "blue";
-          const glyph =
-            (meta && meta.glyph) || ["ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚱ", "ᚲ", "ᚷ"][i % 7];
-          node.append(
-            $.call(null, "div", { className: "glyph", innerText: glyph })
-          );
+          // Add an empty glyph div for all tile types - symbols are now handled by CSS
+          node.append($.call(null, "div", { className: "glyph" }));
 
           const cost = meta?.cost ?? 1;
           node.append(
@@ -3493,17 +3513,23 @@
           const sel = state.selected.get(pageId);
           if (sel.has(idx)) sel.delete(idx);
         } else {
-          // make active default tile
-          page.layout[idx] = { name: "Tile", cost: 1, type: "gray" };
+          // make active default tile (gray)
+          page.layout[idx] = { name: "ᛇ", cost: 1, type: "gray" };
         }
         renderAll();
       }
       function cycleType(idx, pageId) {
         const page = CFG.pages.find((p) => p.id === pageId);
         const t = page.layout[idx]?.type || "gray";
-        const order = ["gray", "blue", "green", "gold"];
+        const order = ["gray", "green", "blue", "gold"];
         const next = order[(order.indexOf(t) + 1) % order.length];
-        if (page.layout[idx]) page.layout[idx].type = next;
+        if (page.layout[idx]) {
+          // Update the tile type and set the appropriate cost
+          page.layout[idx].type = next;
+          // Set cost based on tile type
+          const costs = { gray: 1, green: 2, blue: 3, gold: 5 };
+          page.layout[idx].cost = costs[next] || 1;
+        }
         renderAll();
       }
 
