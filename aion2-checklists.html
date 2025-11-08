@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Aion Ascend — Schedule, Upcoming, Timer & Checklists</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --bg: #0f172a;
@@ -41,7 +44,7 @@
           "Helvetica Neue", "Noto Sans", sans-serif;
         position: relative;
       }
-      
+
       /* Video background with overlay for better contrast */
       #video-bg {
         position: fixed;
@@ -54,10 +57,10 @@
         opacity: 1; /* Increased from 0.2 for better visibility */
         pointer-events: none;
       }
-      
+
       /* Dark overlay to improve text readability */
       body::after {
-        content: '';
+        content: "";
         position: fixed;
         top: 0;
         left: 0;
@@ -87,23 +90,45 @@
         margin-bottom: 20px;
       }
       @keyframes flashyShadow {
-        0% { text-shadow: 0 0 5px #fff, 0 0 10px #9d4edd, 0 0 20px #c77dff; } /* Purple */
-        10% { text-shadow: 0 0 5px #fff, 0 0 10px #7d6edd, 0 0 20px #a79dff; } /* Purple-Blue */
-        20% { text-shadow: 0 0 5px #fff, 0 0 10px #5b4edd, 0 0 20px #8d9dff; } /* Blue */
-        30% { text-shadow: 0 0 5px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff; } /* Blue-Teal */
-        40% { text-shadow: 0 0 5px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7; } /* Teal */
-        50% { text-shadow: 0 0 5px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7; } /* Teal-Green */
-        60% { text-shadow: 0 0 5px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d; } /* Green */
-        70% { text-shadow: 0 0 5px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d; } /* Green-Yellow */
-        80% { text-shadow: 0 0 5px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d; } /* Yellow */
-        90% { text-shadow: 0 0 5px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d; } /* Yellow-Orange */
-        100% { text-shadow: 0 0 5px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d; } /* Red */
+        0% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #9d4edd, 0 0 20px #c77dff;
+        } /* Purple */
+        10% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #7d6edd, 0 0 20px #a79dff;
+        } /* Purple-Blue */
+        20% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #5b4edd, 0 0 20px #8d9dff;
+        } /* Blue */
+        30% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff;
+        } /* Blue-Teal */
+        40% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7;
+        } /* Teal */
+        50% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7;
+        } /* Teal-Green */
+        60% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d;
+        } /* Green */
+        70% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d;
+        } /* Green-Yellow */
+        80% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d;
+        } /* Yellow */
+        90% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d;
+        } /* Yellow-Orange */
+        100% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d;
+        } /* Red */
       }
-      
+
       h1 {
         font-size: clamp(28px, 4vw, 36px);
         margin: 0;
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         font-weight: 700;
         color: #ffffff !important;
         letter-spacing: 0.5px;
@@ -118,11 +143,11 @@
       .section-title {
         margin: 26px 4px 12px;
         font-size: 30px;
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         font-weight: 700;
         color: #2a004dc7;
         letter-spacing: 0.5px;
-        text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
       }
 
       /* Weekly grid */
@@ -244,6 +269,14 @@
         cursor: pointer;
         transition: transform 0.05s ease;
       }
+      .red-btn {
+        background: #7f1d1d;
+        color: white;
+        border: 1px solid #991b1b;
+      }
+      .red-btn:hover {
+        background: #991b1b;
+      }
       .btn:hover {
         transform: translateY(-1px);
       }
@@ -359,7 +392,7 @@
         font-size: 1.25rem;
         margin: 24px 0 12px;
         font-weight: 700;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         letter-spacing: 0.3px;
         background: rgba(34, 211, 238, 0.08);
         border: 1px solid var(--border);
@@ -413,7 +446,7 @@
         font-size: 12px;
         opacity: 0.8;
       }
-      
+
       /* Header and Navigation */
       header {
         background: none !important;
@@ -422,14 +455,14 @@
         border: none;
         box-shadow: none;
       }
-      
+
       .header-content {
         text-align: center;
         margin: 0;
         padding: 0;
         background: none !important;
       }
-      
+
       @keyframes titleGlow {
         0% {
           color: #8a2be2; /* Purple */
@@ -476,7 +509,7 @@
         animation: titleGlow 20s ease-in-out infinite;
         transition: color 0.5s ease, text-shadow 0.5s ease;
       }
-      
+
       .main-nav {
         display: flex;
         justify-content: center;
@@ -485,7 +518,7 @@
         padding: 0;
         flex-wrap: wrap;
       }
-      
+
       .nav-btn {
         background: rgba(17, 24, 39, 0.8);
         color: var(--text);
@@ -497,348 +530,162 @@
         font-weight: 500;
         transition: all 0.2s ease;
       }
-      
+
       .nav-btn:hover {
         background: var(--accent);
         color: var(--bg);
         border-color: var(--accent);
         font-weight: 600;
       }
-      
+
       .nav-btn.active {
         background: rgba(193, 218, 219, 0.603);
         border-color: rgba(13, 121, 138, 0.8);
         color: rgba(16, 124, 141, 0.9);
       }
-      
-      .current-day h3 {
-        color: #22ee2c;
-        font-weight: 700;
-        text-shadow: 0 0 10px rgba(34, 238, 44, 0.5);
-      }
     </style>
   </head>
   <body>
     <video id="video-bg" autoplay muted loop playsinline>
-      <source src="Images/bg_anim.mp4" type="video/mp4">
+      <source src="Images/bg_anim.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    
+
     <div class="wrap">
       <header>
         <h1>AION 2</h1>
         <nav class="main-nav">
-          <a href="aion2-schedule.html" class="nav-btn active">Schedule</a>
+          <a href="aion2-schedule.html" class="nav-btn">Schedule</a>
           <a href="aion2-timers.html" class="nav-btn">Timers</a>
-          <a href="aion2-checklists.html" class="nav-btn">Checklists</a>
+          <a href="aion2-checklists.html" class="nav-btn active">Checklists</a>
           <a href="aion2-skills.html" class="nav-btn">Skill Builder</a>
           <a href="aion2-stats.html" class="nav-btn">Stat Builder</a>
         </nav>
       </header>
 
-      <div class="section-title">Weekly Schedule</div>
-      <div class="grid" id="grid"></div>
-      <div class="time-info">
-        <div class="tz" id="tz"></div>
-        <div class="timezone-note">Times are shown in your device's local time.</div>
+
+      <div class="section-title">Daily & Weekly Checklists</div>
+      <div class="reset-row-global">
+        <button class="btn red-btn" id="resetDaily">Reset dailies</button>
+        <button class="btn red-btn" id="resetWeekly">Reset weeklies</button>
+      </div>
+      <div class="checklists">
+        <div class="check-card" id="leftCol">
+          <!-- Left: Daily Battlefield (Scheduled), Weekly DG, Daily DG -->
+        </div>
+        <div class="check-card" id="rightCol">
+          <!-- Right: Daily Quests, Weekly Quests -->
+        </div>
       </div>
     </div>
 
     <script>
-      // ------------------- Schedule data (Monday = 0 .. Sunday = 6) -------------------
-      const SCHEDULE = [
+      // Constants for localStorage keys
+      const KEY_PREFIX_DAILY = 'daily_';
+      const KEY_PREFIX_WEEKLY = 'weekly_';
+      
+      // Helper function to create slugs for storage keys
+      function slug(s) {
+        return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      }
+
+      // Groups organized EXACTLY as requested:
+      const LEFT_GROUPS = [
         {
-          name: "Chantra Dredgion",
-          category: "Battlegrounds",
-          days: [0, 1, 2, 3, 4, 5, 6],
-          start: "11:00",
-          end: "13:00",
+          title: "Daily Battlefield (Scheduled)",
+          scope: "daily",
+          items: [
+            { name: "Black Vevium Battlefield (4‑man)", attempts: 2 },
+            { name: "Tiak (duo)", attempts: 2 },
+            { name: "Dredge", attempts: 1 },
+            { name: "Harbinger (solo)", attempts: 1 },
+          ],
         },
         {
-          name: "Chantra Dredgion",
-          category: "Battlegrounds",
-          days: [0, 1, 2, 3, 4, 5, 6],
-          start: "22:00",
-          end: "24:00",
+          title: "Weekly DG",
+          scope: "weekly",
+          items: [
+            { name: "Burning Citadel", attempts: 5 },
+            { name: "Allos Cosmos", attempts: 5 },
+            { name: "Wall of Lament", attempts: 4 },
+            { name: "Phaistos", attempts: 1 },
+          ],
         },
         {
-          name: "Tiak Research Center",
-          category: "Battlegrounds",
-          days: [1, 2, 4],
-          start: "20:00",
-          end: "22:00",
+          title: "Daily DG",
+          scope: "daily",
+          items: [
+            { name: "Tempus (solo)", attempts: 1 },
+            { name: "Labyrinth", attempts: 1 },
+            { name: "Suna Dungeon", attempts: 1 },
+          ],
         },
-        {
-          name: "Black Vevium Battlefield",
-          category: "Battlegrounds",
-          days: [0, 2, 4],
-          start: "21:00",
-          end: "23:00",
-        },
-        {
-          name: "Harbinger of Fate",
-          category: "Battlegrounds",
-          days: [0, 1, 2, 3, 4, 5, 6],
-          start: "10:00",
-          end: "10:30",
-        },
-        {
-          name: "Harbinger of Fate",
-          category: "Battlegrounds",
-          days: [0, 1, 3, 4, 5],
-          start: "20:00",
-          end: "20:30",
-        },
-        {
-          name: "Incarnate Conquests",
-          category: "Short Event",
-          days: [0, 1, 2, 3, 4, 5, 6],
-          start: "18:00",
-          end: "18:15",
-        },
-        {
-          name: "Temple of Scales & Crimson Temple",
-          category: "Siege",
-          days: [1],
-          start: "19:00",
-          end: "20:00",
-        },
-        {
-          name: "Temple of Scales & Crimson Temple",
-          category: "Siege",
-          days: [6],
-          start: "16:00",
-          end: "17:00",
-        },
-        {
-          name: "Altar of Avarice & Vorgaltem Citadel",
-          category: "Siege",
-          days: [3],
-          start: "19:00",
-          end: "20:00",
-        },
-        {
-          name: "Altar of Avarice & Vorgaltem Citadel",
-          category: "Siege",
-          days: [6],
-          start: "16:00",
-          end: "17:00",
-        },
-        {
-          name: "Alpheta Beluslan",
-          category: "Siege",
-          days: [2, 5],
-          start: "19:00",
-          end: "20:00",
-        },
-        {
-          name: "Governor Sunayaka",
-          category: "Raid",
-          days: [4, 5],
-          start: "20:00",
-          end: "21:00",
-        },
-        {
-          name: "Hexad",
-          category: "Raid",
-          days: [2, 6],
-          start: "20:00",
-          end: "21:00",
-        },
-        {
-          name: "Dredgion Interception",
-          category: "Raid",
-          days: [1, 3],
-          start: "20:00",
-          end: "21:00",
-        },
-        {
-          name: "Eye rift",
-          category: "Special Event",
-          days: [0, 5, 6],
-          start: "19:00",
-          end: "19:30",
-        }, // Added Eye rift event
-      ];
-      const DAY_NAMES = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
       ];
 
-      // ------------------- Helpers for schedule -------------------
-      function parseHM(hm) {
-        const [h, m] = hm.split(":").map(Number);
-        return { h, m };
-      }
-      function toLocaleHM(d) {
-        return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      }
-      function toDateForDowAndTime(now, mondayIndex, hm) {
-        const targetJs = (mondayIndex + 1) % 7;
-        const { h, m } = parseHM(hm);
-        const todayJs = now.getDay();
-        let add = (targetJs - todayJs + 7) % 7;
-        const candidate = new Date(now);
-        candidate.setHours(0, 0, 0, 0);
-        candidate.setDate(candidate.getDate() + add);
-        candidate.setHours(h, m, 0, 0);
-        return candidate;
-      }
-      function endDateFromStart(start, startHM, endHM) {
-        const e = parseHM(endHM);
-        const end = new Date(start);
-        if (endHM === "24:00") {
-          end.setDate(end.getDate() + 1);
-          end.setHours(0, 0, 0, 0);
-        } else {
-          end.setHours(e.h, e.m, 0, 0);
-          if (end <= start) {
-            end.setDate(end.getDate() + 1);
-          }
-        }
-        return end;
-      }
-      function nextOccurrences(now) {
-        const occ = [];
-        for (const ev of SCHEDULE) {
-          for (const d of ev.days) {
-            const start = toDateForDowAndTime(now, d, ev.start);
-            const end = endDateFromStart(start, ev.start, ev.end);
-            if (now > end) {
-              start.setDate(start.getDate() + 7);
-            }
-            const nextEnd = endDateFromStart(start, ev.start, ev.end);
-            const ongoing = now >= start && now < nextEnd;
-            occ.push({ ...ev, dayIndex: d, start, end: nextEnd, ongoing });
-          }
-        }
-        occ.sort((a, b) => a.start - b.start);
-        return occ;
-      }
-      function groupByDayWithLocalTimes(now) {
-        const map = Array.from({ length: 7 }, (_, i) => ({
-          day: i,
-          events: [],
-        }));
-        for (const ev of SCHEDULE) {
-          for (const d of ev.days) {
-            const start = toDateForDowAndTime(now, d, ev.start);
-            const end = endDateFromStart(start, ev.start, ev.end);
-            map[d].events.push({ name: ev.name, start, end, dayIndex: d });
-          }
-        }
-        // Sort events by start time, and if start time is same, by end time (earlier first)
-        for (const col of map) {
-          col.events.sort((a, b) => {
-            if (a.start.getTime() === b.start.getTime()) {
-              return a.end - b.end; // Earlier end times first
-            }
-            return a.start - b.start;
-          });
-        }
-        return map;
-      }
-      function keyOf(ev) {
-        return `${ev.name}|${ev.dayIndex}|${ev.start.toISOString()}`;
-      }
-      function categoryClass(cat) {
-        const c = cat?.toLowerCase() || "";
-        if (c.startsWith("battle")) return "battlegrounds";
-        if (c.startsWith("short")) return "short";
-        if (c.startsWith("siege")) return "siege";
-        if (c.startsWith("raid")) return "raid";
-        if (c.startsWith("special")) return "raid"; // Using raid color for special events
-        return "";
-      }
+      const RIGHT_GROUPS = [
+        {
+          title: "Daily Quests",
+          scope: "daily",
+          items: [
+            { name: "Eye Quests", attempts: 1 },
+            { name: "Eye Reset Scrolls", attempts: 1 },
+            { name: "Contracts", attempts: 1 },
+            { name: "Mesa Sky", attempts: 1 },
+          ],
+        },
+        {
+          title: "Weekly Quests",
+          scope: "weekly",
+          items: [
+            { name: "PVP Zones Tia", attempts: 1 },
+            { name: "Lafsran quests", attempts: 1 },
+            { name: "Lafsran camps", attempts: 1 },
+            { name: "Gelk/Ing Artis", attempts: 1 },
+            { name: "Gelk/Ing PVP", attempts: 1 },
+          ],
+        },
+      ];
 
-      // ------------------- Render schedule -------------------
-      function renderHeader() {
-        const tz =
-          Intl.DateTimeFormat().resolvedOptions().timeZone || "local time";
-        const now = new Date();
-        const s = now.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        });
-        document.getElementById("tz").textContent = `Your time: ${s} · ${tz}`;
-      }
-
-      function renderGrid() {
-        const grid = document.getElementById("grid");
-        const now = new Date();
-        const columns = groupByDayWithLocalTimes(now);
-
-        const occ = nextOccurrences(now);
-
-        // Find the next upcoming event (regardless of whether there's a current one)
-        let nextEvent = null;
-        for (const event of occ) {
-          if (event.start > now) {
-            nextEvent = event;
-            break;
-          }
-        }
-
-        // If we found a next event, find all events with the same start time
-        let nextEvents = [];
-        if (nextEvent) {
-          const nextStartTime = nextEvent.start.getTime();
-          nextEvents = occ.filter((o) => o.start.getTime() === nextStartTime);
-        }
-
-        grid.innerHTML = columns
-          .map((col) => {
-            const dayTitle = DAY_NAMES[col.day];
-            // Adjust for JavaScript's getDay() (0=Sunday) vs our schedule (0=Monday)
-            const today = (new Date().getDay() + 6) % 7; // Convert to 0=Monday format
-            const isCurrentDay = col.day === today;
-            const dayClass = isCurrentDay ? ' current-day' : '';
-            const rows = col.events
-              .map((ev) => {
-                const when = `${toLocaleHM(ev.start)}–${toLocaleHM(ev.end)}`;
-                const evKey = keyOf(ev);
-                const live = now >= ev.start && now < ev.end;
-
-                // Check if this event is one of the next events
-                const isNext = nextEvents.some((ne) => keyOf(ne) === evKey);
-
-                const timeClass = live ? "now" : isNext ? "next" : "";
-                return `<div class="row">
-          <span class="r-name">${ev.name}</span>
-          <span class="r-time ${timeClass}">${when}</span>
-        </div>`;
+      function renderSide(containerId, groups) {
+        const root = document.getElementById(containerId);
+        root.innerHTML = groups
+          .map((group, idx) => {
+            const prefix = group.scope === "daily" ? KEY_PREFIX_DAILY : KEY_PREFIX_WEEKLY;
+            const rows = group.items
+              .map((it) => {
+                const ticks = Array.from({ length: it.attempts }, (_, i) => {
+                  const key = `${prefix}${slug(group.title)}__${slug(it.name)}__${i}`;
+                  const checked = localStorage.getItem(key) === "1" ? "checked" : "";
+                  return `<input type="checkbox" class="tickbox" data-key="${key}" ${checked}>`;
+                }).join("");
+                const itemKey = `${prefix}${slug(group.title)}__${slug(it.name)}`;
+                return `<div class="item" data-item="${itemKey}">
+                  <div class="item-name">${it.name}</div>
+                  <div class="ticks">${ticks}</div>
+                </div>`;
               })
               .join("");
-            return `<div class="day${dayClass}">
-      <h3>${dayTitle}</h3>
-      <div class="list">${
-        rows || '<div class="row"><span class="r-name">No events</span></div>'
-      }</div>
-    </div>`;
+            const spacer = idx < groups.length - 1 ? '<div class="spacer-row" aria-hidden="true"></div>' : "";
+            return `<div class="group">
+              <h4 class="group-title">${group.title}</h4>
+              ${rows}
+            </div>${spacer}`;
           })
           .join("");
+
+        // Wire change events and set done state
+        root.querySelectorAll(".tickbox").forEach((cb) => {
+          const key = cb.dataset.key;
+          cb.addEventListener("change", () => {
+            localStorage.setItem(key, cb.checked ? "1" : "0");
+            updateItemDone(cb.closest(".item"));
+          });
+        });
+        root.querySelectorAll(".item").forEach(updateItemDone);
       }
 
-      // Initial render + refresh every minute
-      renderHeader();
-      renderGrid();
-      setInterval(() => {
-        renderHeader();
-        renderGrid();
-      }, 60 * 1000);
-
-      // Constants for localStorage keys
-      const KEY_PREFIX_DAILY = 'aion2_daily_';
-      const KEY_PREFIX_WEEKLY = 'aion2_weekly_';
-
       function updateItemDone(itemEl) {
-        const anyUnchecked =
-          itemEl.querySelectorAll(".tickbox:not(:checked)").length > 0;
+        const anyUnchecked = itemEl.querySelectorAll(".tickbox:not(:checked)").length > 0;
         itemEl.classList.toggle("done", !anyUnchecked);
       }
 
@@ -846,24 +693,19 @@
         Object.keys(localStorage).forEach((k) => {
           if (k.startsWith(prefix)) localStorage.removeItem(k);
         });
-        document
-          .querySelectorAll(`.tickbox[data-key^="${prefix}"]`)
-          .forEach((cb) => {
-            cb.checked = false;
-            updateItemDone(cb.closest(".item"));
-          });
+        document.querySelectorAll(`.tickbox[data-key^="${prefix}"]`).forEach((cb) => {
+          cb.checked = false;
+          updateItemDone(cb.closest(".item"));
+        });
       }
 
+      // Initial render
+      renderSide("leftCol", LEFT_GROUPS);
+      renderSide("rightCol", RIGHT_GROUPS);
+
       // Reset buttons
-      const resetDailyBtn = document.getElementById("resetDaily");
-      const resetWeeklyBtn = document.getElementById("resetWeekly");
-      
-      if (resetDailyBtn) {
-        resetDailyBtn.addEventListener("click", () => resetPrefix(KEY_PREFIX_DAILY));
-      }
-      if (resetWeeklyBtn) {
-        resetWeeklyBtn.addEventListener("click", () => resetPrefix(KEY_PREFIX_WEEKLY));
-      }
+      document.getElementById("resetDaily").addEventListener("click", () => resetPrefix(KEY_PREFIX_DAILY));
+      document.getElementById("resetWeekly").addEventListener("click", () => resetPrefix(KEY_PREFIX_WEEKLY));
     </script>
   </body>
 </html>

@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aion Ascend — Schedule, Upcoming, Timer & Checklists</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: #111827;
+        --muted: #94a3b8;
+        --text: #e5e7eb;
+        --border: #1f2937;
+        --accent: #22d3ee;
+
+        --cat-battlegrounds: #2563eb;
+        --cat-short: #eab308;
+        --cat-siege: #ef4444;
+        --cat-raid: #10b981;
+        --now-bg: linear-gradient(180deg, #6ee7b7, #34d399);
+        --now-outline: #10b981;
+        --next-bg: linear-gradient(180deg, #fbbf24, #f59e0b);
+        --next-outline: #f59e0b;
+
+        --timer-green: #10b981;
+        --timer-orange: #f59e0b;
+        --timer-red: #ef4444;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        color: var(--text);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          "Helvetica Neue", "Noto Sans", sans-serif;
+        position: relative;
+      }
+
+      /* Video background with overlay for better contrast */
+      #video-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -2;
+        opacity: 1; /* Increased from 0.2 for better visibility */
+        pointer-events: none;
+      }
+
+      /* Dark overlay to improve text readability */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(11, 18, 36, 0); /* Dark overlay with 50% opacity */
+        z-index: -1;
+        pointer-events: none;
+      }
+      a {
+        color: inherit;
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 32px auto;
+        padding: 0 20px;
+      }
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0px;
+        position: relative;
+        border: none;
+        background: transparent;
+        padding: 24px 20px;
+        margin-bottom: 20px;
+      }
+      @keyframes flashyShadow {
+        0% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #9d4edd, 0 0 20px #c77dff;
+        } /* Purple */
+        10% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #7d6edd, 0 0 20px #a79dff;
+        } /* Purple-Blue */
+        20% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #5b4edd, 0 0 20px #8d9dff;
+        } /* Blue */
+        30% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff;
+        } /* Blue-Teal */
+        40% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7;
+        } /* Teal */
+        50% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7;
+        } /* Teal-Green */
+        60% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d;
+        } /* Green */
+        70% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d;
+        } /* Green-Yellow */
+        80% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d;
+        } /* Yellow */
+        90% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d;
+        } /* Yellow-Orange */
+        100% {
+          text-shadow: 0 0 5px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d;
+        } /* Red */
+      }
+
+      h1 {
+        font-size: clamp(28px, 4vw, 36px);
+        margin: 0;
+        font-family: "Baloo 2", cursive;
+        font-weight: 700;
+        color: #ffffff !important;
+        letter-spacing: 0.5px;
+        animation: flashyShadow 30s infinite ease-in-out;
+      }
+      .tz {
+        font-weight: 600;
+        color: #e9e2f0;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .section-title {
+        margin: 26px 4px 12px;
+        font-size: 30px;
+        font-family: "Baloo 2", cursive;
+        font-weight: 700;
+        color: #2a004dc7;
+        letter-spacing: 0.5px;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Weekly grid */
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(7, minmax(120px, 1fr));
+      }
+      .day {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #0f172a, #0b1224);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .day h3 {
+        margin: 0;
+        padding: 12px 14px;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        border-bottom: 1px solid var(--border);
+        background: #0b1224;
+      }
+      .list {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .row {
+        border: 1px solid var(--border);
+        background: #0f172a;
+        border-radius: 12px;
+        padding: 12px 12px;
+      }
+      .r-name {
+        display: block;
+        font-weight: 800;
+        font-size: 15px;
+        margin-bottom: 6px;
+        line-height: 1.2;
+      }
+      .r-time {
+        display: inline-block;
+        font-weight: 900;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        color: #0b1224;
+        background: linear-gradient(180deg, #e5e7eb, #cbd5e1);
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-variant-numeric: tabular-nums;
+      }
+      .r-time.now {
+        background: linear-gradient(180deg, #6ee7b7, #34d399);
+        color: #052e1c;
+        outline: 2px solid var(--timer-green);
+      }
+      .r-time.next {
+        background: linear-gradient(180deg, #fbbf24, #f59e0b);
+        color: #3b1a01;
+        outline: 2px solid var(--timer-orange);
+      }
+
+      footer {
+        margin: 26px 4px;
+        color: #94a3b8;
+        font-size: 12px;
+      }
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Timer */
+      .timer {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, #0f172a, #0b1224);
+        padding: 18px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .timer-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .timer label {
+        font-weight: 700;
+        color: #cbd5e1;
+      }
+      .timer input[type="number"] {
+        width: 110px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #0b1224;
+        color: #var(--text);
+        font-weight: 800;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: #0f172a;
+        color: #e5e7eb;
+        font-weight: 800;
+        padding: 10px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 0.05s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn.green {
+        background: linear-gradient(180deg, #34d399, #10b981);
+        color: #052e1c;
+      }
+      .btn.orange {
+        background: linear-gradient(180deg, #fbbf24, #f59e0b);
+        color: #3b1a01;
+      }
+      .btn.ghost {
+        background: #0f172a;
+        color: #e5e7eb;
+      }
+      .presets {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .timer-display {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .digits {
+        font-variant-numeric: tabular-nums;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        font-size: clamp(36px, 7vw, 64px);
+        background: radial-gradient(
+            800px 200px at 0% 0%,
+            rgba(255, 255, 255, 0.06),
+            transparent 50%
+          ),
+          linear-gradient(180deg, #0f172a, #0b1224);
+        border: 1px solid var(--border);
+        padding: 14px 18px;
+        border-radius: 16px;
+      }
+      .digits.state-green {
+        background: linear-gradient(180deg, #6ee7b7, #34d399);
+        color: #052e1c;
+        outline: 2px solid var(--timer-green);
+      }
+      .digits.state-orange {
+        background: linear-gradient(180deg, #fbbf24, #f59e0b);
+        color: #3b1a01;
+        outline: 2px solid var(--timer-orange);
+      }
+      .digits.state-red {
+        background: linear-gradient(180deg, #fecaca, #f87171);
+        color: #220002;
+        outline: 2px solid var(--timer-red);
+      }
+      .progress {
+        position: relative;
+        height: 10px;
+        background: #0b1224;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+        flex: 1;
+        min-width: 200px;
+      }
+      .bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0%;
+      }
+      .bar.green {
+        background: linear-gradient(90deg, #22d3ee, #10b981);
+      }
+      .bar.orange {
+        background: linear-gradient(90deg, #f59e0b, #efb72a);
+      }
+      .bar.red {
+        background: linear-gradient(90deg, #ef4444, #f87171);
+      }
+
+      /* Checklists */
+      .reset-row-global {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 10px 0 18px;
+      }
+      .checklists {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      @media (max-width: 880px) {
+        .checklists {
+          grid-template-columns: 1fr;
+        }
+      }
+      .check-card {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, #0f172a, #0b1224);
+        padding: 18px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .group {
+        margin-top: 6px;
+      }
+      .group-title {
+        color: #e2e8f0;
+        font-size: 1.25rem;
+        margin: 24px 0 12px;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        letter-spacing: 0.3px;
+        background: rgba(34, 211, 238, 0.08);
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        border-radius: 10px;
+      }
+      .item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-top: 1px dashed #1e293b;
+      }
+      .item:first-child {
+        border-top: 0;
+      }
+      .item-name {
+        font-weight: 700;
+      }
+      .ticks {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .tickbox {
+        width: 22px;
+        height: 22px;
+        accent-color: #10b981;
+        cursor: pointer;
+      }
+      .item.done .item-name {
+        opacity: 0.65;
+        text-decoration: line-through;
+      }
+      .spacer-row {
+        height: 18px;
+      }
+      .time-info {
+        margin: 16px auto 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        max-width: 90%;
+      }
+      .timezone-note {
+        margin-top: 4px;
+        font-size: 12px;
+        opacity: 0.8;
+      }
+
+      /* Header and Navigation */
+      header {
+        background: none !important;
+        padding: 20px 0 0;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+      }
+
+      .header-content {
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background: none !important;
+      }
+
+      @keyframes titleGlow {
+        0% {
+          color: #8a2be2; /* Purple */
+          text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+        }
+        14.28% {
+          color: #4169e1; /* Blue */
+          text-shadow: 0 0 15px rgba(65, 105, 225, 0.8);
+        }
+        28.56% {
+          color: #00ced1; /* Teal */
+          text-shadow: 0 0 20px rgba(0, 206, 209, 0.9);
+        }
+        42.84% {
+          color: #32cd32; /* Green */
+          text-shadow: 0 0 15px rgba(50, 205, 50, 0.8);
+        }
+        57.12% {
+          color: #ffd700; /* Yellow */
+          text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+        }
+        71.4% {
+          color: #ff8c00; /* Orange */
+          text-shadow: 0 0 15px rgba(255, 140, 0, 0.8);
+        }
+        85.68% {
+          color: #ff4500; /* Red */
+          text-shadow: 0 0 20px rgba(255, 69, 0, 0.9);
+        }
+        100% {
+          color: #ff1493; /* Pink */
+          text-shadow: 0 0 10px rgba(255, 20, 147, 0.7);
+        }
+      }
+
+      header h1 {
+        margin: 0 0 10px 0;
+        padding: 0;
+        font-size: 2.5em;
+        color: #8a2be2; /* Initial color */
+        text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+        background: none !important;
+        display: block;
+        animation: titleGlow 20s ease-in-out infinite;
+        transition: color 0.5s ease, text-shadow 0.5s ease;
+      }
+
+      .main-nav {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 10px 0 0 0;
+        padding: 0;
+        flex-wrap: wrap;
+      }
+
+      .nav-btn {
+        background: rgba(17, 24, 39, 0.8);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .nav-btn:hover {
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+
+      .nav-btn.active {
+        background: rgba(193, 218, 219, 0.603);
+        border-color: rgba(13, 121, 138, 0.8);
+        color: rgba(16, 124, 141, 0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <video id="video-bg" autoplay muted loop playsinline>
+      <source src="Images/bg_anim.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <div class="wrap">
+      <header>
+        <h1>AION 2</h1>
+        <nav class="main-nav">
+          <a href="aion2-schedule.html" class="nav-btn">Schedule</a>
+          <a href="aion2-timers.html" class="nav-btn active">Timers</a>
+          <a href="aion2-checklists.html" class="nav-btn">Checklists</a>
+          <a href="aion2-skills.html" class="nav-btn">Skill Builder</a>
+          <a href="aion2-stats.html" class="nav-btn">Stat Builder</a>
+        </nav>
+      </header>
+
+      <!-- HH:MM:SS Timer -->
+      <div class="section-title">Black Cloud Market Countdown</div>
+      <div class="timer" id="hms-timer">
+        <div class="timer-top">
+          <label for="time-input">Set time (H:MM:SS):</label>
+          <input
+            id="time-input"
+            type="text"
+            value="4:00:00"
+            placeholder="H:MM:SS"
+            style="
+              width: 140px;
+              padding: 10px 14px;
+              border-radius: 12px;
+              border: 1px solid var(--border);
+              background: #0f172a;
+              color: #e5e7eb;
+              font-weight: 600;
+            "
+            pattern="^[0-9]:[0-5][0-9]:[0-5][0-9]$"
+            title="Enter time in H:MM:SS format"
+          />
+          <div class="presets">
+            <button class="btn ghost" data-hms-preset="4:00:00">4h</button>
+          </div>
+          <div
+            class="switch"
+            style="
+              margin-left: auto;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            "
+          >
+            <input id="hms-loop" type="checkbox" checked />
+            <label for="hms-loop">Auto‑restart</label>
+          </div>
+        </div>
+        <div class="timer-display">
+          <div class="digits" id="hms-digits" aria-live="polite">00:00:30</div>
+          <div class="progress"><div class="bar green" id="hms-bar"></div></div>
+          <div class="cycles">Cycle: <span id="hms-cycle">1</span></div>
+        </div>
+        <div
+          class="timer-actions"
+          style="display: flex; gap: 8px; flex-wrap: wrap"
+        >
+          <button id="hms-start" class="btn green">Start</button>
+          <button id="hms-pause" class="btn orange">Pause</button>
+          <button
+            id="hms-reset"
+            class="btn"
+            style="
+              background: linear-gradient(180deg, #ad2828, #ad2828);
+              color: white;
+            "
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Seconds Timer -->
+      <div class="section-title">Custom countdown</div>
+      <div class="timer" id="timer">
+        <div class="timer-top">
+          <label for="seconds">Length (sec):</label>
+          <input
+            id="seconds"
+            type="number"
+            min="1"
+            step="1"
+            value="60"
+            style="color: #fff"
+          />
+          <div class="presets">
+            <button class="btn ghost" data-preset="15">15s</button>
+            <button class="btn ghost" data-preset="30">30s</button>
+            <button class="btn ghost" data-preset="45">45s</button>
+            <button class="btn ghost" data-preset="60">1m</button>
+            <button class="btn ghost" data-preset="900">15m</button>
+            <button class="btn ghost" data-preset="1800">30m</button>
+            <button class="btn ghost" data-preset="3600">1h</button>
+            <button class="btn ghost" data-preset="7200">2h</button>
+            <button class="btn ghost" data-preset="10800">3h</button>
+            <button class="btn ghost" data-preset="14400">4h</button>
+            <button class="btn ghost" data-preset="43200">12h</button>
+            <button class="btn ghost" data-preset="86400">24h</button>
+          </div>
+          <div
+            class="switch"
+            style="
+              margin-left: auto;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            "
+          >
+            <input id="loop" type="checkbox" checked />
+            <label for="loop">Auto‑restart</label>
+          </div>
+        </div>
+        <div class="timer-display">
+          <div class="digits" id="digits" aria-live="polite">00:45</div>
+          <div class="progress"><div class="bar green" id="bar"></div></div>
+          <div class="cycles">Cycle: <span id="cycle">1</span></div>
+        </div>
+        <div
+          class="timer-actions"
+          style="display: flex; gap: 8px; flex-wrap: wrap"
+        >
+          <button id="start" class="btn green">Start</button>
+          <button id="pause" class="btn orange">Pause</button>
+          <button
+            id="reset"
+            class="btn"
+            style="
+              background: linear-gradient(180deg, #ad2828, #ad2828);
+              color: white;
+            "
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Wait for the DOM to be fully loaded before initializing the timer
+      document.addEventListener("DOMContentLoaded", function () {
+        // ------------------- Timer with color thresholds -------------------
+        // Timer state
+        let durationMs = 60 * 1000; // Default 60 seconds (1 minute)
+        let remainingMs = durationMs;
+        let running = false;
+        let cycle = 1;
+        let endAt = null;
+        let tickHandle = null;
+
+        // localStorage keys for seconds timer
+        const TIMER_KEY = 'aion2_seconds_timer';
+
+        // Function to save timer state
+        function saveTimerState() {
+          const state = {
+            durationMs,
+            remainingMs,
+            running,
+            cycle,
+            endAt,
+            loopEnabled: loopChk ? loopChk.checked : true,
+            inputValue: secondsInput ? secondsInput.value : '60'
+          };
+          localStorage.setItem(TIMER_KEY, JSON.stringify(state));
+        }
+
+        // Function to load timer state
+        function loadTimerState() {
+          const saved = localStorage.getItem(TIMER_KEY);
+          if (saved) {
+            try {
+              const state = JSON.parse(saved);
+              durationMs = state.durationMs || 60 * 1000;
+              cycle = state.cycle || 1;
+              
+              // If timer was running, calculate current remaining time
+              if (state.running && state.endAt) {
+                const now = Date.now();
+                remainingMs = Math.max(0, state.endAt - now);
+                
+                // If time has expired
+                if (remainingMs <= 0) {
+                  if (state.loopEnabled) {
+                    // Calculate how many cycles have passed
+                    const elapsed = now - state.endAt;
+                    const fullCycles = Math.floor(elapsed / durationMs);
+                    cycle = state.cycle + fullCycles + 1; // +1 for the initial completion
+                    remainingMs = durationMs - (elapsed % durationMs);
+                    endAt = now + remainingMs;
+                    running = true;
+                  } else {
+                    remainingMs = 0;
+                    running = false;
+                  }
+                } else {
+                  // Timer still running
+                  endAt = state.endAt;
+                  running = true;
+                }
+              } else {
+                remainingMs = state.remainingMs || durationMs;
+                running = false;
+              }
+              
+              // Restore input value
+              if (secondsInput && state.inputValue) {
+                secondsInput.value = state.inputValue;
+              }
+              
+              // Restore loop checkbox
+              if (loopChk) {
+                loopChk.checked = state.loopEnabled !== false;
+              }
+              
+              return true;
+            } catch (e) {
+              console.error('Failed to load timer state:', e);
+            }
+          }
+          return false;
+        }
+
+        // Get DOM elements
+        const secondsInput = document.getElementById("seconds");
+        const digits = document.getElementById("digits");
+        const bar = document.getElementById("bar");
+        const cycleEl = document.getElementById("cycle");
+        const loopChk = document.getElementById("loop");
+        const btnStart = document.getElementById("start");
+        const btnPause = document.getElementById("pause");
+        const btnReset = document.getElementById("reset");
+
+        // Format time in MM:SS or H:MM:SS format
+        function formatTime(ms) {
+          const s = Math.ceil(Math.max(0, ms) / 1000);
+          const h = Math.floor(s / 3600);
+          const m = Math.floor((s % 3600) / 60);
+          const sec = s % 60;
+
+          if (h > 0) {
+            return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(
+              2,
+              "0"
+            )}`;
+          }
+          return `${String(m).padStart(
+            2,
+            "0"
+          )}:${String(sec).padStart(2, "0")}`;
+        }
+
+        // Update the time display
+        function updateDisplay(ms) {
+          if (!digits) return;
+
+          const s = Math.ceil(Math.max(0, ms) / 1000);
+
+          // Update time display
+          digits.textContent = formatTime(ms);
+
+          // Update colors based on remaining time
+          digits.className = "digits";
+          if (bar) bar.className = "bar";
+
+          if (s > 20) {
+            digits.classList.add("state-green");
+            if (bar) bar.classList.add("green");
+          } else if (s >= 10) {
+            digits.classList.add("state-orange");
+            if (bar) bar.classList.add("orange");
+          } else {
+            digits.classList.add("state-red");
+            if (bar) bar.classList.add("red");
+          }
+        }
+
+        // Update the progress bar
+        function updateProgress(ms) {
+          if (!bar) return;
+          const pct = 100 * (1 - ms / durationMs);
+          bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+        }
+
+        // Pause the timer
+        function pauseTimer() {
+          running = false;
+          if (tickHandle) {
+            clearInterval(tickHandle);
+            tickHandle = null;
+          }
+          if (btnStart) btnStart.disabled = false;
+          saveTimerState(); // Save state when paused
+        }
+
+        // Update the timer
+        function updateTimer() {
+          if (!running) return;
+
+          const now = Date.now();
+          remainingMs = Math.max(0, endAt - now);
+
+          if (remainingMs <= 0) {
+            if (loopChk && loopChk.checked) {
+              // Auto-restart the timer
+              cycle++;
+              if (cycleEl) cycleEl.textContent = cycle;
+              endAt = now + durationMs;
+              remainingMs = durationMs;
+            } else {
+              remainingMs = 0;
+              pauseTimer();
+            }
+          }
+
+          updateDisplay(remainingMs);
+          updateProgress(remainingMs);
+          saveTimerState(); // Save state on each update
+        }
+
+        // Initialize the display
+        function initTimer() {
+          // Load saved state first
+          const stateLoaded = loadTimerState();
+          
+          if (cycleEl) cycleEl.textContent = cycle;
+          updateDisplay(remainingMs);
+          updateProgress(remainingMs);
+
+          // If timer was running, resume it
+          if (running) {
+            if (btnStart) btnStart.disabled = true;
+            if (tickHandle) clearInterval(tickHandle);
+            tickHandle = setInterval(updateTimer, 100);
+            updateTimer(); // Initial update
+          }
+
+          // Set up event listeners
+          if (btnStart) {
+            btnStart.addEventListener("click", function (e) {
+              e.preventDefault();
+              if (!running) {
+                if (remainingMs === 0 || remainingMs === durationMs) {
+                  durationMs =
+                    Math.max(1, parseInt(secondsInput.value) || 45) * 1000;
+                  remainingMs = durationMs;
+                  cycle = 1;
+                  if (cycleEl) cycleEl.textContent = "1";
+                }
+                endAt = Date.now() + remainingMs;
+                running = true;
+                btnStart.disabled = true;
+                if (tickHandle) clearInterval(tickHandle);
+                tickHandle = setInterval(updateTimer, 100);
+                updateTimer(); // Initial update
+                saveTimerState(); // Save state when starting
+              }
+            });
+          }
+
+          if (btnPause) {
+            btnPause.addEventListener("click", function (e) {
+              e.preventDefault();
+              pauseTimer();
+            });
+          }
+
+          if (btnReset) {
+            btnReset.addEventListener("click", function (e) {
+              e.preventDefault();
+              pauseTimer();
+              durationMs =
+                Math.max(1, parseInt(secondsInput.value) || 45) * 1000;
+              remainingMs = durationMs;
+              cycle = 1;
+              if (cycleEl) cycleEl.textContent = "1";
+              updateDisplay(remainingMs);
+              updateProgress(remainingMs);
+              saveTimerState(); // Save state when resetting
+            });
+          }
+
+          // Set up preset buttons
+          document.querySelectorAll("[data-preset]").forEach(function (btn) {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              const preset = parseInt(btn.getAttribute("data-preset")) || 45;
+              if (secondsInput) secondsInput.value = preset;
+              const newDuration = preset * 1000;
+              if (!running) {
+                durationMs = newDuration;
+                remainingMs = durationMs;
+                updateDisplay(remainingMs);
+                updateProgress(remainingMs);
+              }
+            });
+          });
+
+          // Handle manual input changes
+          if (secondsInput) {
+            secondsInput.addEventListener("change", function () {
+              const val = Math.max(1, parseInt(this.value) || 45);
+              this.value = val;
+              durationMs = val * 1000;
+              if (!running) {
+                remainingMs = durationMs;
+                updateDisplay(remainingMs);
+                updateProgress(remainingMs);
+              }
+            });
+          }
+        }
+
+        // Initialize the timer
+        initTimer();
+
+        // ------------------- HH:MM:SS Timer -------------------
+        function initHMSTimer() {
+          // Timer state
+          let hmsDurationMs = 4 * 60 * 60 * 1000; // Default 4 hours
+          let hmsRemainingMs = hmsDurationMs;
+          let hmsRunning = false;
+          let hmsCycle = 1;
+          let hmsEndAt = null;
+          let hmsTickHandle = null;
+
+          // localStorage keys for HMS timer
+          const HMS_TIMER_KEY = 'aion2_hms_timer';
+
+          // Get DOM elements
+          const timeInput = document.getElementById("time-input");
+          const hmsDigits = document.getElementById("hms-digits");
+          const hmsBar = document.getElementById("hms-bar");
+          const hmsCycleEl = document.getElementById("hms-cycle");
+          const hmsLoopChk = document.getElementById("hms-loop");
+          const hmsBtnStart = document.getElementById("hms-start");
+          const hmsBtnPause = document.getElementById("hms-pause");
+          const hmsBtnReset = document.getElementById("hms-reset");
+
+          // Function to save HMS timer state
+          function saveHMSTimerState() {
+            const state = {
+              hmsDurationMs,
+              hmsRemainingMs,
+              hmsRunning,
+              hmsCycle,
+              hmsEndAt,
+              loopEnabled: hmsLoopChk ? hmsLoopChk.checked : true,
+              inputValue: timeInput ? timeInput.value : '4:00:00'
+            };
+            localStorage.setItem(HMS_TIMER_KEY, JSON.stringify(state));
+          }
+
+          // Function to load HMS timer state
+          function loadHMSTimerState() {
+            const saved = localStorage.getItem(HMS_TIMER_KEY);
+            if (saved) {
+              try {
+                const state = JSON.parse(saved);
+                hmsDurationMs = state.hmsDurationMs || 4 * 60 * 60 * 1000;
+                hmsCycle = state.hmsCycle || 1;
+                
+                // If timer was running, calculate current remaining time
+                if (state.hmsRunning && state.hmsEndAt) {
+                  const now = Date.now();
+                  hmsRemainingMs = Math.max(0, state.hmsEndAt - now);
+                  
+                  // If time has expired
+                  if (hmsRemainingMs <= 0) {
+                    if (state.loopEnabled) {
+                      // Calculate how many cycles have passed
+                      const elapsed = now - state.hmsEndAt;
+                      const fullCycles = Math.floor(elapsed / hmsDurationMs);
+                      hmsCycle = state.hmsCycle + fullCycles + 1; // +1 for the initial completion
+                      hmsRemainingMs = hmsDurationMs - (elapsed % hmsDurationMs);
+                      hmsEndAt = now + hmsRemainingMs;
+                      hmsRunning = true;
+                    } else {
+                      hmsRemainingMs = 0;
+                      hmsRunning = false;
+                    }
+                  } else {
+                    // Timer still running
+                    hmsEndAt = state.hmsEndAt;
+                    hmsRunning = true;
+                  }
+                } else {
+                  hmsRemainingMs = state.hmsRemainingMs || hmsDurationMs;
+                  hmsRunning = false;
+                }
+                
+                // Restore input value
+                if (timeInput && state.inputValue) {
+                  timeInput.value = state.inputValue;
+                }
+                
+                // Restore loop checkbox
+                if (hmsLoopChk) {
+                  hmsLoopChk.checked = state.loopEnabled !== false;
+                }
+                
+                return true;
+              } catch (e) {
+                console.error('Failed to load HMS timer state:', e);
+              }
+            }
+            return false;
+          }
+
+          // Convert HH:MM:SS to milliseconds
+          function parseTimeToMs(timeStr) {
+            const parts = timeStr.split(":");
+            let h = 0,
+              m = 0,
+              s = 0;
+
+            if (parts.length === 3) {
+              h = parseInt(parts[0]) || 0;
+              m = parseInt(parts[1]) || 0;
+              s = parseInt(parts[2]) || 0;
+            } else if (parts.length === 2) {
+              m = parseInt(parts[0]) || 0;
+              s = parseInt(parts[1]) || 0;
+            } else if (parts.length === 1) {
+              s = parseInt(parts[0]) || 0;
+            }
+
+            return (h * 3600 + m * 60 + s) * 1000;
+          }
+
+          // Format milliseconds to H:MM:SS
+          function formatHMS(ms) {
+            const totalSeconds = Math.ceil(Math.max(0, ms) / 1000);
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+
+            return [
+              String(h), // Hours without leading zero
+              String(m).padStart(2, "0"),
+              String(s).padStart(2, "0"),
+            ].join(":");
+          }
+
+          // Update the time display
+          function updateHMSDisplay(ms) {
+            if (!hmsDigits) return;
+            const totalSeconds = Math.ceil(Math.max(0, ms) / 1000);
+
+            // Update time display
+            hmsDigits.textContent = formatHMS(ms);
+
+            // Update colors based on remaining time
+            hmsDigits.className = "digits";
+            if (hmsBar) hmsBar.className = "bar";
+
+            if (totalSeconds > 60) {
+              hmsDigits.classList.add("state-green");
+              if (hmsBar) hmsBar.classList.add("green");
+            } else if (totalSeconds >= 10) {
+              hmsDigits.classList.add("state-orange");
+              if (hmsBar) hmsBar.classList.add("orange");
+            } else {
+              hmsDigits.classList.add("state-red");
+              if (hmsBar) hmsBar.classList.add("red");
+            }
+          }
+
+          // Update the progress bar
+          function updateHMSProgress(ms) {
+            if (!hmsBar) return;
+            const pct = 100 * (1 - ms / hmsDurationMs);
+            hmsBar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+          }
+
+          // Pause the timer
+          function pauseHMSTimer() {
+            hmsRunning = false;
+            if (hmsTickHandle) {
+              clearInterval(hmsTickHandle);
+              hmsTickHandle = null;
+            }
+            if (hmsBtnStart) hmsBtnStart.disabled = false;
+            saveHMSTimerState(); // Save state when paused
+          }
+
+          // Update the timer
+          function updateHMSTimer() {
+            if (!hmsRunning) return;
+
+            const now = Date.now();
+            hmsRemainingMs = Math.max(0, hmsEndAt - now);
+
+            if (hmsRemainingMs <= 0) {
+              if (hmsLoopChk && hmsLoopChk.checked) {
+                // Auto-restart the timer
+                hmsCycle++;
+                if (hmsCycleEl) hmsCycleEl.textContent = hmsCycle;
+                hmsEndAt = now + hmsDurationMs;
+                hmsRemainingMs = hmsDurationMs;
+              } else {
+                hmsRemainingMs = 0;
+                pauseHMSTimer();
+              }
+            }
+
+            updateHMSDisplay(hmsRemainingMs);
+            updateHMSProgress(hmsRemainingMs);
+            saveHMSTimerState(); // Save state on each update
+          }
+
+          // Validate time input for H:MM:SS format
+          function validateTimeInput(input) {
+            const timeRegex = /^[0-9]:[0-5][0-9]:[0-5][0-9]$/;
+            return timeRegex.test(input);
+          }
+
+          // Load saved state and resume if needed
+          const hmsStateLoaded = loadHMSTimerState();
+          
+          // Initialize display
+          if (hmsCycleEl) hmsCycleEl.textContent = hmsCycle;
+          updateHMSDisplay(hmsRemainingMs);
+          updateHMSProgress(hmsRemainingMs);
+
+          // If timer was running, resume it
+          if (hmsRunning) {
+            if (hmsBtnStart) hmsBtnStart.disabled = true;
+            if (hmsTickHandle) clearInterval(hmsTickHandle);
+            hmsTickHandle = setInterval(updateHMSTimer, 100);
+            updateHMSTimer(); // Initial update
+          }
+
+          // Set up event listeners
+          if (timeInput) {
+            timeInput.addEventListener("input", function (e) {
+              // Get cursor position before any changes
+              const cursorPos = this.selectionStart;
+              let val = this.value;
+
+              // Remove all non-digit characters
+              const digitsOnly = val.replace(/\D/g, "");
+              let formatted = "";
+
+              // Format as we type
+              if (digitsOnly.length > 0) {
+                // First digit (hour)
+                formatted = digitsOnly[0];
+
+                // After first digit, add colon and second digit
+                if (digitsOnly.length > 1) {
+                  formatted += ":" + digitsOnly[1];
+
+                  // After second digit, add third digit
+                  if (digitsOnly.length > 2) {
+                    formatted += digitsOnly[2];
+
+                    // After third digit, add colon and fourth digit
+                    if (digitsOnly.length > 3) {
+                      formatted += ":" + digitsOnly[3];
+
+                      // After fourth digit, add fifth digit
+                      if (digitsOnly.length > 4) {
+                        formatted += digitsOnly[4];
+
+                        // After fifth digit, add sixth digit if it exists
+                        if (digitsOnly.length > 5) {
+                          formatted += digitsOnly[5];
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              // Update the input value
+              this.value = formatted;
+
+              // Always move cursor to the end after formatting
+              const newCursorPos = formatted.length;
+              this.setSelectionRange(newCursorPos, newCursorPos);
+
+              // Use the formatted value for further processing
+              val = formatted;
+
+              // Only update timer if input is valid and not running
+              if (validateTimeInput(val) && !hmsRunning) {
+                hmsDurationMs = parseTimeToMs(val);
+                hmsRemainingMs = hmsDurationMs;
+                updateHMSDisplay(hmsRemainingMs);
+                updateHMSProgress(hmsRemainingMs);
+              }
+            });
+
+            // Validate on blur
+            timeInput.addEventListener("blur", function () {
+              if (!validateTimeInput(this.value)) {
+                this.value = "4:00:00";
+                hmsDurationMs = 4 * 60 * 60 * 1000;
+                hmsRemainingMs = hmsDurationMs;
+                updateHMSDisplay(hmsRemainingMs);
+                updateHMSProgress(hmsRemainingMs);
+              } else {
+                hmsDurationMs = parseTimeToMs(this.value);
+                hmsRemainingMs = hmsDurationMs;
+                updateHMSDisplay(hmsRemainingMs);
+                updateHMSProgress(hmsRemainingMs);
+              }
+            });
+          }
+
+          // Set up preset buttons
+          document
+            .querySelectorAll("[data-hms-preset]")
+            .forEach(function (btn) {
+              btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                const preset =
+                  this.getAttribute("data-hms-preset") || "4:00:00";
+                if (timeInput) timeInput.value = preset;
+                const newDuration = parseTimeToMs(preset);
+                if (!hmsRunning) {
+                  hmsDurationMs = newDuration;
+                  hmsRemainingMs = hmsDurationMs;
+                  updateHMSDisplay(hmsRemainingMs);
+                  updateHMSProgress(hmsRemainingMs);
+                }
+              });
+            });
+
+          // Start button
+          if (hmsBtnStart) {
+            hmsBtnStart.addEventListener("click", function (e) {
+              e.preventDefault();
+              if (!hmsRunning) {
+                // Validate input when starting
+                if (timeInput && !validateTimeInput(timeInput.value)) {
+                  timeInput.value = "4:00:00";
+                  hmsDurationMs = 4 * 60 * 60 * 1000;
+                } else if (timeInput) {
+                  hmsDurationMs = parseTimeToMs(timeInput.value);
+                }
+
+                if (hmsRemainingMs === 0 || hmsRemainingMs === hmsDurationMs) {
+                  hmsRemainingMs = hmsDurationMs;
+                  hmsCycle = 1;
+                  if (hmsCycleEl) hmsCycleEl.textContent = "1";
+                }
+
+                hmsEndAt = Date.now() + hmsRemainingMs;
+                hmsRunning = true;
+                hmsBtnStart.disabled = true;
+                if (hmsTickHandle) clearInterval(hmsTickHandle);
+                hmsTickHandle = setInterval(updateHMSTimer, 100);
+                updateHMSTimer(); // Initial update
+                saveHMSTimerState(); // Save state when starting
+              }
+            });
+          }
+
+          // Pause button
+          if (hmsBtnPause) {
+            hmsBtnPause.addEventListener("click", function (e) {
+              e.preventDefault();
+              pauseHMSTimer();
+            });
+          }
+
+          // Reset button
+          if (hmsBtnReset) {
+            hmsBtnReset.addEventListener("click", function (e) {
+              e.preventDefault();
+              pauseHMSTimer();
+              if (timeInput) {
+                hmsDurationMs = parseTimeToMs(timeInput.value);
+              }
+              hmsRemainingMs = hmsDurationMs;
+              hmsCycle = 1;
+              if (hmsCycleEl) hmsCycleEl.textContent = "1";
+              updateHMSDisplay(hmsRemainingMs);
+              updateHMSProgress(hmsRemainingMs);
+              saveHMSTimerState(); // Save state when resetting
+            });
+          }
+        }
+        initHMSTimer();
+      });
+
+      // Timer initialization code ends here
+    </script>
+  </body>
+</html>
