@@ -29,7 +29,7 @@
         --timer-green: #10b981;
         --timer-orange: #f59e0b;
         --timer-red: #ef4444;
-        
+
         /* Tile styling - Enhanced for better visibility */
         --tile: #222b3d;
         --tile-edge: #131a25;
@@ -100,42 +100,36 @@
         margin-bottom: 20px;
       }
       @keyframes flashyShadow {
-        0% {
-          text-shadow: 0 0 1px #fff, 0 0 8px #9d4edd, 0 0 12px #c77dff;
-        } /* Purple */
+        0%, 100% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00ff, 0 0 12px #ff00ff;
+        } /* Magenta (Start/End) */
         10% {
-          text-shadow: 0 0 1px #fff, 0 0 8px #7d6edd, 0 0 12px #a79dff;
-        } /* Purple-Blue */
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00cc, 0 0 16px #ff00cc;
+        } /* Pink */
         20% {
-          text-shadow: 0 0 1px #fff, 0 0 8px #5b4edd, 0 0 12px #8d9dff;
-        } /* Blue */
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff0099, 0 0 20px #ff0099;
+        } /* Deep Pink */
         30% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff;
-        } /* Blue-Teal */
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0066, 0 0 22px #ff0066;
+        } /* Red-Pink */
         40% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7;
-        } /* Teal */
-        50% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7;
-        } /* Teal-Green */
-        60% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d;
-        } /* Green */
-        70% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d;
-        } /* Green-Yellow */
-        80% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d;
-        } /* Yellow */
-        90% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d;
-        } /* Yellow-Orange */
-        95% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d;
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0000, 0 0 24px #ff0000;
         } /* Red */
-        100% {
-          text-shadow: 0 0 1px #fff, 0 0 10px #961685, 0 0 20px #770655;
-        } /* Purp */
+        50% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff5500, 0 0 26px #ff5500;
+        } /* Orange-Red */
+        60% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffaa00, 0 0 28px #ffaa00;
+        } /* Orange */
+        70% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffff00, 0 0 30px #ffff00;
+        } /* Yellow */
+        80% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #aaff00, 0 0 28px #aaff00;
+        } /* Lime */
+        90% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #00ff00, 0 0 26px #00ff00;
+        } /* Green */
       }
 
       .tz {
@@ -406,7 +400,7 @@
         letter-spacing: 2px;
         text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6,
           0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
-        animation: flashyShadow 30s infinite ease-in-out !important;
+        animation: flashyShadow 15s infinite linear !important;
       }
 
       .main-nav {
@@ -671,7 +665,14 @@
           <button class="btn" id="importBtn">Import Build</button>
           <button class="btn red" id="resetBtn">Reset All</button>
         </div>
-        <div style="display: flex; width: 100%; justify-content: center; margin-top: 8px">
+        <div
+          style="
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            margin-top: 8px;
+          "
+        >
           <div style="display: flex; align-items: center; gap: 8px">
             <span style="color: #9fb7ff">Budget</span>
             <div class="meter" style="width: 220px">
@@ -4196,6 +4197,6 @@
       });
 
       renderAll();
-      </script>
+    </script>
   </body>
 </html>

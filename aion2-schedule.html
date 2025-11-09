@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Aion 2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --bg: #0f172a;
@@ -41,7 +44,7 @@
           "Helvetica Neue", "Noto Sans", sans-serif;
         position: relative;
       }
-      
+
       /* Video background with overlay for better contrast */
       #video-bg {
         position: fixed;
@@ -54,10 +57,10 @@
         opacity: 1; /* Increased from 0.2 for better visibility */
         pointer-events: none;
       }
-      
+
       /* Dark overlay to improve text readability */
       body::after {
-        content: '';
+        content: "";
         position: fixed;
         top: 0;
         left: 0;
@@ -87,28 +90,47 @@
         margin-bottom: 20px;
       }
       @keyframes flashyShadow {
-        0% { text-shadow: 0 0 1px #fff, 0 0 8px #9d4edd, 0 0 12px #c77dff; } /* Purple */
-        10% { text-shadow: 0 0 1px #fff, 0 0 8px #7d6edd, 0 0 12px #a79dff; } /* Purple-Blue */
-        20% { text-shadow: 0 0 1px #fff, 0 0 8px #5b4edd, 0 0 12px #8d9dff; } /* Blue */
-        30% { text-shadow: 0 0 1px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff; } /* Blue-Teal */
-        40% { text-shadow: 0 0 1px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7; } /* Teal */
-        50% { text-shadow: 0 0 1px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7; } /* Teal-Green */
-        60% { text-shadow: 0 0 1px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d; } /* Green */
-        70% { text-shadow: 0 0 1px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d; } /* Green-Yellow */
-        80% { text-shadow: 0 0 1px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d; } /* Yellow */
-        90% { text-shadow: 0 0 1px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d; } /* Yellow-Orange */
-        95% { text-shadow: 0 0 1px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d; } /* Red */
-        100% { text-shadow: 0 0 1px #fff, 0 0 10px #961685, 0 0 20px #770655; } /* Purp */
+        0%, 100% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00ff, 0 0 12px #ff00ff;
+        } /* Magenta (Start/End) */
+        10% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00cc, 0 0 16px #ff00cc;
+        } /* Pink */
+        20% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff0099, 0 0 20px #ff0099;
+        } /* Deep Pink */
+        30% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0066, 0 0 22px #ff0066;
+        } /* Red-Pink */
+        40% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0000, 0 0 24px #ff0000;
+        } /* Red */
+        50% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff5500, 0 0 26px #ff5500;
+        } /* Orange-Red */
+        60% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffaa00, 0 0 28px #ffaa00;
+        } /* Orange */
+        70% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffff00, 0 0 30px #ffff00;
+        } /* Yellow */
+        80% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #aaff00, 0 0 28px #aaff00;
+        } /* Lime */
+        90% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #00ff00, 0 0 26px #00ff00;
+        } /* Green */
       }
-      
+
       h1 {
         font-size: clamp(28px, 4vw, 36px);
         margin: 0;
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         font-weight: 700;
         color: #ffffff !important;
         letter-spacing: 2px;
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6,
+          0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
         animation: flashyShadow 30s infinite ease-in-out !important;
       }
       .tz {
@@ -120,11 +142,11 @@
       .section-title {
         margin: 26px 4px 12px;
         font-size: 30px;
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         font-weight: 700;
         color: #2a004dc7;
         letter-spacing: 0.5px;
-        text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
       }
 
       /* Weekly grid */
@@ -361,7 +383,7 @@
         font-size: 1.25rem;
         margin: 24px 0 12px;
         font-weight: 700;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         letter-spacing: 0.3px;
         background: rgba(34, 211, 238, 0.08);
         border: 1px solid var(--border);
@@ -415,7 +437,7 @@
         font-size: 12px;
         opacity: 0.8;
       }
-      
+
       /* Header and Navigation */
       header {
         background: none !important;
@@ -424,14 +446,14 @@
         border: none;
         box-shadow: none;
       }
-      
+
       .header-content {
         text-align: center;
         margin: 0;
         padding: 0;
         background: none !important;
       }
-      
+
       @keyframes titleGlow {
         0% {
           color: #8a2be2; /* Purple */
@@ -478,7 +500,7 @@
         animation: titleGlow 20s ease-in-out infinite;
         transition: color 0.5s ease, text-shadow 0.5s ease;
       }
-      
+
       .main-nav {
         display: flex;
         justify-content: center;
@@ -487,12 +509,12 @@
         padding: 0;
         flex-wrap: wrap;
       }
-      
+
       .nav-btn {
         background: rgba(17, 24, 39, 0.8);
         color: var(--text);
         border: 1px solid var(--border);
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         padding: 8px 16px;
         border-radius: 20px;
         text-decoration: none;
@@ -500,20 +522,20 @@
         font-weight: 500;
         transition: all 0.2s ease;
       }
-      
+
       .nav-btn:hover {
         background: var(--accent);
         color: var(--bg);
         border-color: var(--accent);
         font-weight: 600;
       }
-      
+
       .nav-btn.active {
         background: rgba(193, 218, 219, 0.603);
         border-color: rgba(13, 121, 138, 0.8);
         color: rgba(16, 124, 141, 0.9);
       }
-      
+
       .current-day h3 {
         color: #22ee2c;
         font-weight: 700;
@@ -523,10 +545,10 @@
   </head>
   <body>
     <video id="video-bg" autoplay muted loop playsinline>
-      <source src="Images/bg_anim.mp4" type="video/mp4">
+      <source src="Images/bg_anim.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    
+
     <div class="wrap">
       <header>
         <h1>AION 2</h1>
@@ -543,7 +565,9 @@
       <div class="grid" id="grid"></div>
       <div class="time-info">
         <div class="tz" id="tz"></div>
-        <div class="timezone-note">Times are shown in your device's local time.</div>
+        <div class="timezone-note">
+          Times are shown in your device's local time.
+        </div>
       </div>
     </div>
 
@@ -800,7 +824,7 @@
             // Adjust for JavaScript's getDay() (0=Sunday) vs our schedule (0=Monday)
             const today = (new Date().getDay() + 6) % 7; // Convert to 0=Monday format
             const isCurrentDay = col.day === today;
-            const dayClass = isCurrentDay ? ' current-day' : '';
+            const dayClass = isCurrentDay ? " current-day" : "";
             const rows = col.events
               .map((ev) => {
                 const when = `${toLocaleHM(ev.start)}–${toLocaleHM(ev.end)}`;
@@ -836,8 +860,8 @@
       }, 60 * 1000);
 
       // Constants for localStorage keys
-      const KEY_PREFIX_DAILY = 'aion2_daily_';
-      const KEY_PREFIX_WEEKLY = 'aion2_weekly_';
+      const KEY_PREFIX_DAILY = "aion2_daily_";
+      const KEY_PREFIX_WEEKLY = "aion2_weekly_";
 
       function updateItemDone(itemEl) {
         const anyUnchecked =
@@ -860,12 +884,16 @@
       // Reset buttons
       const resetDailyBtn = document.getElementById("resetDaily");
       const resetWeeklyBtn = document.getElementById("resetWeekly");
-      
+
       if (resetDailyBtn) {
-        resetDailyBtn.addEventListener("click", () => resetPrefix(KEY_PREFIX_DAILY));
+        resetDailyBtn.addEventListener("click", () =>
+          resetPrefix(KEY_PREFIX_DAILY)
+        );
       }
       if (resetWeeklyBtn) {
-        resetWeeklyBtn.addEventListener("click", () => resetPrefix(KEY_PREFIX_WEEKLY));
+        resetWeeklyBtn.addEventListener("click", () =>
+          resetPrefix(KEY_PREFIX_WEEKLY)
+        );
       }
     </script>
   </body>

@@ -90,29 +90,48 @@
         margin-bottom: 20px;
       }
       @keyframes flashyShadow {
-        0% { text-shadow: 0 0 1px #fff, 0 0 8px #9d4edd, 0 0 12px #c77dff; } /* Purple */
-        10% { text-shadow: 0 0 1px #fff, 0 0 8px #7d6edd, 0 0 12px #a79dff; } /* Purple-Blue */
-        20% { text-shadow: 0 0 1px #fff, 0 0 8px #5b4edd, 0 0 12px #8d9dff; } /* Blue */
-        30% { text-shadow: 0 0 1px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff; } /* Blue-Teal */
-        40% { text-shadow: 0 0 1px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7; } /* Teal */
-        50% { text-shadow: 0 0 1px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7; } /* Teal-Green */
-        60% { text-shadow: 0 0 1px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d; } /* Green */
-        70% { text-shadow: 0 0 1px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d; } /* Green-Yellow */
-        80% { text-shadow: 0 0 1px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d; } /* Yellow */
-        90% { text-shadow: 0 0 1px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d; } /* Yellow-Orange */
-        95% { text-shadow: 0 0 1px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d; } /* Red */
-        100% { text-shadow: 0 0 1px #fff, 0 0 10px #961685, 0 0 20px #770655; } /* Purp */
+        0%, 100% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00ff, 0 0 12px #ff00ff;
+        } /* Magenta (Start/End) */
+        10% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00cc, 0 0 16px #ff00cc;
+        } /* Pink */
+        20% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff0099, 0 0 20px #ff0099;
+        } /* Deep Pink */
+        30% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0066, 0 0 22px #ff0066;
+        } /* Red-Pink */
+        40% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0000, 0 0 24px #ff0000;
+        } /* Red */
+        50% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff5500, 0 0 26px #ff5500;
+        } /* Orange-Red */
+        60% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffaa00, 0 0 28px #ffaa00;
+        } /* Orange */
+        70% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffff00, 0 0 30px #ffff00;
+        } /* Yellow */
+        80% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #aaff00, 0 0 28px #aaff00;
+        } /* Lime */
+        90% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #00ff00, 0 0 26px #00ff00;
+        } /* Green */
       }
-      
+
       h1 {
         font-size: clamp(40px, 4vw, 40px);
         margin: 0;
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         font-weight: 700;
         color: #ffffff !important;
         letter-spacing: 2px;
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
-        animation: flashyShadow 30s infinite ease-in-out !important;
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6,
+          0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
+        animation: flashyShadow 15s infinite linear !important;
       }
       .tz {
         font-weight: 600;
@@ -456,7 +475,7 @@
         background: rgba(17, 24, 39, 0.8);
         color: var(--text);
         border: 1px solid var(--border);
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         padding: 8px 16px;
         border-radius: 20px;
         text-decoration: none;
@@ -497,7 +516,6 @@
         </nav>
       </header>
 
-
       <div class="section-title">Daily & Weekly Checklists</div>
       <div class="reset-row-global">
         <button class="btn red-btn" id="resetDaily">Reset dailies</button>
@@ -515,12 +533,15 @@
 
     <script>
       // Constants for localStorage keys
-      const KEY_PREFIX_DAILY = 'daily_';
-      const KEY_PREFIX_WEEKLY = 'weekly_';
-      
+      const KEY_PREFIX_DAILY = "daily_";
+      const KEY_PREFIX_WEEKLY = "weekly_";
+
       // Helper function to create slugs for storage keys
       function slug(s) {
-        return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        return String(s)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
       }
 
       // Groups organized EXACTLY as requested:
@@ -584,22 +605,31 @@
         const root = document.getElementById(containerId);
         root.innerHTML = groups
           .map((group, idx) => {
-            const prefix = group.scope === "daily" ? KEY_PREFIX_DAILY : KEY_PREFIX_WEEKLY;
+            const prefix =
+              group.scope === "daily" ? KEY_PREFIX_DAILY : KEY_PREFIX_WEEKLY;
             const rows = group.items
               .map((it) => {
                 const ticks = Array.from({ length: it.attempts }, (_, i) => {
-                  const key = `${prefix}${slug(group.title)}__${slug(it.name)}__${i}`;
-                  const checked = localStorage.getItem(key) === "1" ? "checked" : "";
+                  const key = `${prefix}${slug(group.title)}__${slug(
+                    it.name
+                  )}__${i}`;
+                  const checked =
+                    localStorage.getItem(key) === "1" ? "checked" : "";
                   return `<input type="checkbox" class="tickbox" data-key="${key}" ${checked}>`;
                 }).join("");
-                const itemKey = `${prefix}${slug(group.title)}__${slug(it.name)}`;
+                const itemKey = `${prefix}${slug(group.title)}__${slug(
+                  it.name
+                )}`;
                 return `<div class="item" data-item="${itemKey}">
                   <div class="item-name">${it.name}</div>
                   <div class="ticks">${ticks}</div>
                 </div>`;
               })
               .join("");
-            const spacer = idx < groups.length - 1 ? '<div class="spacer-row" aria-hidden="true"></div>' : "";
+            const spacer =
+              idx < groups.length - 1
+                ? '<div class="spacer-row" aria-hidden="true"></div>'
+                : "";
             return `<div class="group">
               <h4 class="group-title">${group.title}</h4>
               ${rows}
@@ -619,7 +649,8 @@
       }
 
       function updateItemDone(itemEl) {
-        const anyUnchecked = itemEl.querySelectorAll(".tickbox:not(:checked)").length > 0;
+        const anyUnchecked =
+          itemEl.querySelectorAll(".tickbox:not(:checked)").length > 0;
         itemEl.classList.toggle("done", !anyUnchecked);
       }
 
@@ -627,10 +658,12 @@
         Object.keys(localStorage).forEach((k) => {
           if (k.startsWith(prefix)) localStorage.removeItem(k);
         });
-        document.querySelectorAll(`.tickbox[data-key^="${prefix}"]`).forEach((cb) => {
-          cb.checked = false;
-          updateItemDone(cb.closest(".item"));
-        });
+        document
+          .querySelectorAll(`.tickbox[data-key^="${prefix}"]`)
+          .forEach((cb) => {
+            cb.checked = false;
+            updateItemDone(cb.closest(".item"));
+          });
       }
 
       // Initial render
@@ -638,8 +671,12 @@
       renderSide("rightCol", RIGHT_GROUPS);
 
       // Reset buttons
-      document.getElementById("resetDaily").addEventListener("click", () => resetPrefix(KEY_PREFIX_DAILY));
-      document.getElementById("resetWeekly").addEventListener("click", () => resetPrefix(KEY_PREFIX_WEEKLY));
+      document
+        .getElementById("resetDaily")
+        .addEventListener("click", () => resetPrefix(KEY_PREFIX_DAILY));
+      document
+        .getElementById("resetWeekly")
+        .addEventListener("click", () => resetPrefix(KEY_PREFIX_WEEKLY));
     </script>
   </body>
 </html>

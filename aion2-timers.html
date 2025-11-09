@@ -90,29 +90,48 @@
         margin-bottom: 20px;
       }
       @keyframes flashyShadow {
-        0% { text-shadow: 0 0 1px #fff, 0 0 8px #9d4edd, 0 0 12px #c77dff; } /* Purple */
-        10% { text-shadow: 0 0 1px #fff, 0 0 8px #7d6edd, 0 0 12px #a79dff; } /* Purple-Blue */
-        20% { text-shadow: 0 0 1px #fff, 0 0 8px #5b4edd, 0 0 12px #8d9dff; } /* Blue */
-        30% { text-shadow: 0 0 1px #fff, 0 0 10px #4e8edd, 0 0 20px #7dc7ff; } /* Blue-Teal */
-        40% { text-shadow: 0 0 1px #fff, 0 0 10px #4eddbd, 0 0 20px #7dffe7; } /* Teal */
-        50% { text-shadow: 0 0 1px #fff, 0 0 10px #4edd7d, 0 0 20px #7dffa7; } /* Teal-Green */
-        60% { text-shadow: 0 0 1px #fff, 0 0 10px #8edd4e, 0 0 20px #b7ff7d; } /* Green */
-        70% { text-shadow: 0 0 1px #fff, 0 0 10px #c7dd4e, 0 0 20px #e7ff7d; } /* Green-Yellow */
-        80% { text-shadow: 0 0 1px #fff, 0 0 10px #ddc74e, 0 0 20px #ffeb7d; } /* Yellow */
-        90% { text-shadow: 0 0 1px #fff, 0 0 10px #dda74e, 0 0 20px #ffc77d; } /* Yellow-Orange */
-        95% { text-shadow: 0 0 1px #fff, 0 0 10px #dd4e4e, 0 0 20px #ff7d7d; } /* Red */
-        100% { text-shadow: 0 0 1px #fff, 0 0 10px #961685, 0 0 20px #770655; } /* Purp */
+        0%, 100% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00ff, 0 0 12px #ff00ff;
+        } /* Magenta (Start/End) */
+        10% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff00cc, 0 0 16px #ff00cc;
+        } /* Pink */
+        20% {
+          text-shadow: 0 0 1px #fff, 0 0 8px #ff0099, 0 0 20px #ff0099;
+        } /* Deep Pink */
+        30% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0066, 0 0 22px #ff0066;
+        } /* Red-Pink */
+        40% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff0000, 0 0 24px #ff0000;
+        } /* Red */
+        50% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #ff5500, 0 0 26px #ff5500;
+        } /* Orange-Red */
+        60% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffaa00, 0 0 28px #ffaa00;
+        } /* Orange */
+        70% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #ffff00, 0 0 30px #ffff00;
+        } /* Yellow */
+        80% {
+          text-shadow: 0 0 1px #fff, 0 0 12px #aaff00, 0 0 28px #aaff00;
+        } /* Lime */
+        90% {
+          text-shadow: 0 0 1px #fff, 0 0 10px #00ff00, 0 0 26px #00ff00;
+        } /* Green */
       }
 
       h1 {
         font-size: clamp(28px, 4vw, 36px);
         margin: 0;
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         font-weight: 700;
         color: #ffffff !important;
         letter-spacing: 2px;
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
-        animation: flashyShadow 30s infinite ease-in-out !important;
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6,
+          0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
+        animation: flashyShadow 15s infinite linear !important;
       }
       .tz {
         font-weight: 600;
@@ -495,7 +514,7 @@
         background: rgba(17, 24, 39, 0.8);
         color: var(--text);
         border: 1px solid var(--border);
-        font-family: 'Baloo 2', cursive;
+        font-family: "Baloo 2", cursive;
         padding: 8px 16px;
         border-radius: 20px;
         text-decoration: none;
@@ -676,7 +695,7 @@
         let tickHandle = null;
 
         // localStorage keys for seconds timer
-        const TIMER_KEY = 'aion2_seconds_timer';
+        const TIMER_KEY = "aion2_seconds_timer";
 
         // Function to save timer state
         function saveTimerState() {
@@ -687,7 +706,7 @@
             cycle,
             endAt,
             loopEnabled: loopChk ? loopChk.checked : true,
-            inputValue: secondsInput ? secondsInput.value : '60'
+            inputValue: secondsInput ? secondsInput.value : "60",
           };
           localStorage.setItem(TIMER_KEY, JSON.stringify(state));
         }
@@ -700,12 +719,12 @@
               const state = JSON.parse(saved);
               durationMs = state.durationMs || 60 * 1000;
               cycle = state.cycle || 1;
-              
+
               // If timer was running, calculate current remaining time
               if (state.running && state.endAt) {
                 const now = Date.now();
                 remainingMs = Math.max(0, state.endAt - now);
-                
+
                 // If time has expired
                 if (remainingMs <= 0) {
                   if (state.loopEnabled) {
@@ -729,20 +748,20 @@
                 remainingMs = state.remainingMs || durationMs;
                 running = false;
               }
-              
+
               // Restore input value
               if (secondsInput && state.inputValue) {
                 secondsInput.value = state.inputValue;
               }
-              
+
               // Restore loop checkbox
               if (loopChk) {
                 loopChk.checked = state.loopEnabled !== false;
               }
-              
+
               return true;
             } catch (e) {
-              console.error('Failed to load timer state:', e);
+              console.error("Failed to load timer state:", e);
             }
           }
           return false;
@@ -849,7 +868,7 @@
         function initTimer() {
           // Load saved state first
           const stateLoaded = loadTimerState();
-          
+
           if (cycleEl) cycleEl.textContent = cycle;
           updateDisplay(remainingMs);
           updateProgress(remainingMs);
@@ -952,7 +971,7 @@
           let hmsTickHandle = null;
 
           // localStorage keys for HMS timer
-          const HMS_TIMER_KEY = 'aion2_hms_timer';
+          const HMS_TIMER_KEY = "aion2_hms_timer";
 
           // Get DOM elements
           const timeInput = document.getElementById("time-input");
@@ -973,7 +992,7 @@
               hmsCycle,
               hmsEndAt,
               loopEnabled: hmsLoopChk ? hmsLoopChk.checked : true,
-              inputValue: timeInput ? timeInput.value : '4:00:00'
+              inputValue: timeInput ? timeInput.value : "4:00:00",
             };
             localStorage.setItem(HMS_TIMER_KEY, JSON.stringify(state));
           }
@@ -986,12 +1005,12 @@
                 const state = JSON.parse(saved);
                 hmsDurationMs = state.hmsDurationMs || 4 * 60 * 60 * 1000;
                 hmsCycle = state.hmsCycle || 1;
-                
+
                 // If timer was running, calculate current remaining time
                 if (state.hmsRunning && state.hmsEndAt) {
                   const now = Date.now();
                   hmsRemainingMs = Math.max(0, state.hmsEndAt - now);
-                  
+
                   // If time has expired
                   if (hmsRemainingMs <= 0) {
                     if (state.loopEnabled) {
@@ -999,7 +1018,8 @@
                       const elapsed = now - state.hmsEndAt;
                       const fullCycles = Math.floor(elapsed / hmsDurationMs);
                       hmsCycle = state.hmsCycle + fullCycles + 1; // +1 for the initial completion
-                      hmsRemainingMs = hmsDurationMs - (elapsed % hmsDurationMs);
+                      hmsRemainingMs =
+                        hmsDurationMs - (elapsed % hmsDurationMs);
                       hmsEndAt = now + hmsRemainingMs;
                       hmsRunning = true;
                     } else {
@@ -1015,20 +1035,20 @@
                   hmsRemainingMs = state.hmsRemainingMs || hmsDurationMs;
                   hmsRunning = false;
                 }
-                
+
                 // Restore input value
                 if (timeInput && state.inputValue) {
                   timeInput.value = state.inputValue;
                 }
-                
+
                 // Restore loop checkbox
                 if (hmsLoopChk) {
                   hmsLoopChk.checked = state.loopEnabled !== false;
                 }
-                
+
                 return true;
               } catch (e) {
-                console.error('Failed to load HMS timer state:', e);
+                console.error("Failed to load HMS timer state:", e);
               }
             }
             return false;
@@ -1144,7 +1164,7 @@
 
           // Load saved state and resume if needed
           const hmsStateLoaded = loadHMSTimerState();
-          
+
           // Initialize display
           if (hmsCycleEl) hmsCycleEl.textContent = hmsCycle;
           updateHMSDisplay(hmsRemainingMs);
